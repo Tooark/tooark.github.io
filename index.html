@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tooark — Ferramentas para Desenvolvedores e DevOps</title>
+  <meta name="description" content="Ferramentas open source criadas por entusiastas para ajudar desenvolvedores de software e DevOps. Bibliotecas, CI/CD templates, infraestrutura e mais.">
+  <meta name="keywords" content="Tooark, open source, DevOps, developer tools, CI/CD, Terraform, observability, C#, Node.js">
+  <meta name="author" content="Tooark">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Tooark — Ferramentas para Desenvolvedores e DevOps">
+  <meta property="og:description" content="Ferramentas open source criadas por entusiastas para ajudar desenvolvedores de software e DevOps.">
+  <meta property="og:image" content="https://tooark.com/tooark.png">
+  <meta property="og:url" content="https://tooark.com">
+  <meta property="og:type" content="website">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Tooark — Ferramentas para Desenvolvedores e DevOps">
+  <meta name="twitter:description" content="Ferramentas open source para desenvolvedores e DevOps.">
+  <meta name="twitter:image" content="https://tooark.com/tooark.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="tooark.svg">
+  <link rel="icon" type="image/png" href="tooark.png">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="header" id="header">
+    <div class="container header__inner">
+      <a href="#" class="header__logo" aria-label="Tooark Home">
+        <img src="tooark.svg" alt="Tooark" width="32" height="32">
+        <span>Tooark</span>
+      </a>
+      <nav class="header__nav" id="nav">
+        <a href="#projects" class="header__link">Projetos</a>
+        <a href="#categories" class="header__link">Categorias</a>
+        <a href="#services" class="header__link">Serviços</a>
+        <a href="https://github.com/Tooark" class="header__link header__link--github" target="_blank" rel="noopener noreferrer">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          GitHub
+        </a>
+      </nav>
+      <button class="header__toggle" id="navToggle" aria-label="Abrir menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero__bg"></div>
+    <div class="container hero__inner">
+      <div class="hero__logo" aria-hidden="true">
+        <img src="tooark.svg" alt="" width="160" height="160">
+      </div>
+      <h1 class="hero__title">Tooark</h1>
+      <p class="hero__subtitle">Ferramentas criadas por entusiastas para ajudar<br><strong>Desenvolvedores de Software</strong> e <strong>DevOps</strong></p>
+      <div class="hero__actions">
+        <a href="#projects" class="btn btn--primary">Ver Projetos</a>
+        <a href="https://github.com/Tooark" class="btn btn--outline" target="_blank" rel="noopener noreferrer">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          GitHub
+        </a>
+      </div>
+      <div class="hero__stats" id="heroStats">
+        <div class="hero__stat">
+          <span class="hero__stat-value" id="statRepos">—</span>
+          <span class="hero__stat-label">Repositórios</span>
+        </div>
+        <div class="hero__stat">
+          <span class="hero__stat-value" id="statStars">—</span>
+          <span class="hero__stat-label">Stars</span>
+        </div>
+        <div class="hero__stat">
+          <span class="hero__stat-value" id="statLanguages">—</span>
+          <span class="hero__stat-label">Linguagens</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects -->
+  <section class="section" id="projects">
+    <div class="container">
+      <div class="section__header">
+        <h2 class="section__title">Projetos Open Source</h2>
+        <p class="section__desc">Todos os nossos projetos são open source e construídos para resolver problemas reais do dia a dia de desenvolvimento e operações.</p>
+      </div>
+      <div class="projects__filters" id="projectFilters">
+        <button class="filter-btn active" data-filter="all">Todos</button>
+      </div>
+      <div class="projects__grid" id="projectsGrid">
+        <div class="projects__loading">
+          <div class="spinner"></div>
+          <p>Carregando projetos...</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categories -->
+  <section class="section section--alt" id="categories">
+    <div class="container">
+      <div class="section__header">
+        <h2 class="section__title">O que fazemos</h2>
+        <p class="section__desc">Organizamos nossas ferramentas em categorias para facilitar a busca pela solução ideal para seu projeto.</p>
+      </div>
+      <div class="categories__grid">
+        <div class="category-card">
+          <div class="category-card__icon">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          </div>
+          <h3 class="category-card__title">Bibliotecas</h3>
+          <p class="category-card__desc">Pacotes e bibliotecas reutilizáveis em C#, Node.js e JavaScript para acelerar o desenvolvimento.</p>
+        </div>
+        <div class="category-card">
+          <div class="category-card__icon">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </div>
+          <h3 class="category-card__title">CI/CD &amp; DevOps</h3>
+          <p class="category-card__desc">Templates e actions para GitLab CI e GitHub Actions — SonarQube, Trivy, notificações e mais.</p>
+        </div>
+        <div class="category-card">
+          <div class="category-card__icon">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <h3 class="category-card__title">Observabilidade</h3>
+          <p class="category-card__desc">Soluções pré-configuradas com OpenTelemetry para monitoramento de aplicações web e backend.</p>
+        </div>
+        <div class="category-card">
+          <div class="category-card__icon">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <h3 class="category-card__title">Infraestrutura</h3>
+          <p class="category-card__desc">Módulos Terraform para AWS e GCP, imagens Docker base e configurações de terminal.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section class="section" id="services">
+    <div class="container">
+      <div class="section__header">
+        <h2 class="section__title">Serviços <span class="badge">Em breve</span></h2>
+        <p class="section__desc">Estamos preparando serviços profissionais para levar suas operações ao próximo nível.</p>
+      </div>
+      <div class="services__grid">
+        <div class="service-card">
+          <div class="service-card__icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          </div>
+          <h3 class="service-card__title">Consultoria DevOps</h3>
+          <p class="service-card__desc">Implementação de pipelines CI/CD, containerização e automação de infraestrutura.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-card__icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3 class="service-card__title">Segurança &amp; Compliance</h3>
+          <p class="service-card__desc">Análise de vulnerabilidades, quality gates e conformidade de código com melhores práticas.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-card__icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          </div>
+          <h3 class="service-card__title">Monitoramento</h3>
+          <p class="service-card__desc">Setup completo de observabilidade com OpenTelemetry, dashboards e alertas inteligentes.</p>
+        </div>
+      </div>
+      <div class="services__cta">
+        <p>Quer ser notificado quando os serviços estiverem disponíveis?</p>
+        <a href="mailto:contato@tooark.com" class="btn btn--primary">Entre em contato</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div class="footer__brand">
+        <a href="#" class="footer__logo" aria-label="Tooark Home">
+          <img src="tooark.svg" alt="Tooark" width="28" height="28">
+          <span>Tooark</span>
+        </a>
+        <p class="footer__tagline">Ferramentas para Desenvolvedores e DevOps</p>
+      </div>
+      <div class="footer__links">
+        <a href="https://github.com/Tooark" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="mailto:contato@tooark.com">Contato</a>
+      </div>
+      <div class="footer__copy">
+        <p>&copy; <span id="year"></span> Tooark. Todos os direitos reservados.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
