@@ -82,26 +82,38 @@
   // ---- Mobile nav toggle ----
   const navToggle = document.getElementById('navToggle');
   const nav = document.getElementById('nav');
+  const navClose = document.getElementById('navClose');
 
   // Verifica se os elementos de navegação e toggle existem antes de adicionar o listener de clique
   if (nav && navToggle) {
-    // Adiciona um listener de clique para alternar a visibilidade da navegação móvel
-    navToggle.addEventListener('click', function () {
-      const isOpen = nav.classList.toggle('open');
+    var navEl = nav;
+    var navToggleEl = navToggle;
 
-      navToggle.classList.toggle('active');
-      navToggle.setAttribute('aria-expanded', String(isOpen));
+    function closeMobileMenu () {
+      navEl.classList.remove('open');
+      navToggleEl.classList.remove('active');
+      navToggleEl.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+
+    // Adiciona um listener de clique para alternar a visibilidade da navegação móvel
+    navToggleEl.addEventListener('click', function () {
+      const isOpen = navEl.classList.toggle('open');
+
+      navToggleEl.classList.toggle('active');
+      navToggleEl.setAttribute('aria-expanded', String(isOpen));
       document.body.style.overflow = isOpen ? 'hidden' : '';
     });
+
+    if (navClose) {
+      navClose.addEventListener('click', closeMobileMenu);
+    }
 
     // Navegação móvel, fecha o menu ao clicar em um link
     nav.querySelectorAll('.header__link').forEach(function (link) {
       // Adiciona um listener de clique para cada link de navegação para fechar o menu móvel
       link.addEventListener('click', function () {
-        nav.classList.remove('open');
-        navToggle.classList.remove('active');
-        navToggle.setAttribute('aria-expanded', 'false');
-        document.body.style.overflow = '';
+        closeMobileMenu();
       });
     });
   }
