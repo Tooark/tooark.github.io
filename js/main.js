@@ -116,7 +116,7 @@
 
   // ---- Scroll reveal ----
   function initReveal () {
-    var elements = document.querySelectorAll('.project-card, .category-card, .service-card, .package-card');
+    var elements = document.querySelectorAll('.project-card, .category-card, .service-card, .package-card, .contributor-card');
     elements.forEach(function (el) { el.classList.add('reveal'); });
 
     var observer = new IntersectionObserver(function (entries) {

@@ -9,18 +9,34 @@ Site oficial da **Tooark** — ferramentas open source para desenvolvedores e De
 - HTML5, CSS3, JavaScript (vanilla)
 - GitHub Pages + Cloudflare DNS
 - GitHub API para listagem dinâmica de repositórios
+- NuGet Search API para listagem de pacotes
 
 ## Estrutura
 
+```plaintext
+tooark.github.io/
+├── CNAME                    # Domínio customizado (GitHub Pages)
+├── index.html               # Página principal e seções do site
+├── README.md                # Documentação do projeto
+├── css/
+│   └── style.css            # Design system e estilos globais
+├── js/
+│   └── main.js              # Lógica da UI e integrações (GitHub/NuGet)
+└── media/
+    ├── favicon.png          # Favicon PNG
+    ├── favicon.svg          # Favicon SVG
+    ├── tooark-dark.svg      # Logo para fundo claro
+    └── tooark-light.svg     # Logo para fundo escuro
 ```
-├── index.html          # Página principal
-├── css/style.css       # Estilos
-├── js/main.js          # Lógica e integração GitHub API
-├── CNAME               # Domínio customizado
-├── tooark.svg          # Logo vetorial
-├── tooark.png          # Logo raster
-└── tooark.jpg          # Logo JPEG
-```
+
+## Seções da página
+
+- Hero com estatísticas dinâmicas
+- Projetos Open Source com filtros por categoria
+- Pacotes (.NET via NuGet e bloco npm em breve)
+- Contribuidores
+- Categorias
+- Serviços (em breve)
 
 ## Deploy
 
