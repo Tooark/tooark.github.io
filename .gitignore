@@ -1,0 +1,23 @@
+# Ambiente Python local
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Arquivos de ambiente e segredos locais
+.env
+.env.*
+
+# Metadados de editor/IDE
+.vscode/
+.idea/
+
+# Arquivos de sistema operacional
+.DS_Store
+Thumbs.db
+
+# Artefatos de workspace locais
+system/
+
+# Logs
+*.log
