@@ -9,6 +9,28 @@
   const API = 'https://api.github.com';
   const SITE_REPO = 'tooark.github.io';
   const NUGET_API = 'https://azuresearch-usnc.nuget.org/query';
+  const INITIAL_PROJECTS = 9;
+  const PROJECTS_STEP = 9;
+  const INITIAL_PACKAGES = 9;
+  const PACKAGES_STEP = 9;
+
+  /** @type {IntersectionObserver | null} */
+  var revealObserver = null;
+  /** @type {{ all: any[]; filtered: any[]; visibleCount: number; activeCategory: string; searchTerm: string; }} */
+  var projectsState = {
+    all: [],
+    filtered: [],
+    visibleCount: INITIAL_PROJECTS,
+    activeCategory: 'all',
+    searchTerm: '',
+  };
+  /** @type {{ all: any[]; filtered: any[]; visibleCount: number; searchTerm: string; }} */
+  var packagesState = {
+    all: [],
+    filtered: [],
+    visibleCount: INITIAL_PACKAGES,
+    searchTerm: '',
+  };
 
   // Language colors (GitHub style)
   const LANG_COLORS = {
@@ -139,20 +161,82 @@
     // Adiciona a classe 'reveal' a todos os elementos que devem ter o efeito de revelação
     elements.forEach(function (el) { el.classList.add('reveal'); });
 
-    // Cria um IntersectionObserver para alternar a classe 'visible' sempre que o elemento entra ou sai da viewport
-    var observer = new IntersectionObserver(function (entries) {
-      // Itera sobre as entradas observadas para verificar se cada elemento está intersectando com a viewport
-      entries.forEach(function (entry) {
-        // Sempre que entrar na viewport aplica a animação, e ao sair remove para permitir nova animação na próxima entrada
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-        } else {
-          entry.target.classList.remove('visible');
-        }
-      });
-    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    // Mantém um único observer ativo para evitar múltiplos observers concorrentes a cada renderização
+    if (!revealObserver) {
+      revealObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          } else {
+            entry.target.classList.remove('visible');
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    }
 
-    elements.forEach(function (el) { observer.observe(el); });
+    elements.forEach(function (el) {
+      var safeEl = /** @type {HTMLElement} */ (el);
+
+      if (safeEl.dataset.revealObserved !== 'true' && revealObserver) {
+        revealObserver.observe(safeEl);
+        safeEl.dataset.revealObserved = 'true';
+      }
+    });
+  }
+
+  /**
+   * @param {string | null | undefined} value
+   */
+  function normalizeText (value) {
+    return (value || '').toLowerCase().trim();
+  }
+
+  function setupProjectControls () {
+    var searchInput = /** @type {HTMLInputElement | null} */ (document.getElementById('projectSearch'));
+    var showMoreBtn = document.getElementById('projectsShowMore');
+
+    if (searchInput && searchInput.dataset.bound !== 'true') {
+      var safeSearchInput = searchInput;
+
+      searchInput.addEventListener('input', function () {
+        projectsState.searchTerm = normalizeText(safeSearchInput.value);
+        projectsState.visibleCount = INITIAL_PROJECTS;
+        renderProjects();
+      });
+      searchInput.dataset.bound = 'true';
+    }
+
+    if (showMoreBtn && showMoreBtn.dataset.bound !== 'true') {
+      showMoreBtn.addEventListener('click', function () {
+        projectsState.visibleCount += PROJECTS_STEP;
+        renderProjects();
+      });
+      showMoreBtn.dataset.bound = 'true';
+    }
+  }
+
+  function setupPackageControls () {
+    var searchInput = /** @type {HTMLInputElement | null} */ (document.getElementById('nugetSearch'));
+    var showMoreBtn = document.getElementById('nugetShowMore');
+
+    if (searchInput && searchInput.dataset.bound !== 'true') {
+      var safeSearchInput = searchInput;
+
+      searchInput.addEventListener('input', function () {
+        packagesState.searchTerm = normalizeText(safeSearchInput.value);
+        packagesState.visibleCount = INITIAL_PACKAGES;
+        renderPackages();
+      });
+      searchInput.dataset.bound = 'true';
+    }
+
+    if (showMoreBtn && showMoreBtn.dataset.bound !== 'true') {
+      showMoreBtn.addEventListener('click', function () {
+        packagesState.visibleCount += PACKAGES_STEP;
+        renderPackages();
+      });
+      showMoreBtn.dataset.bound = 'true';
+    }
   }
 
   // ---- Format download count ----
@@ -186,8 +270,6 @@
 
     // Realiza requisições paginadas para a API do NuGet
     while (allPackages.length < totalHits) {
-      console.log('Buscando pacotes NuGet...' + NUGET_API + '?q=owner:' + ORG + '&take=' + take + '&skip=' + skip + '&prerelease=false');
-
       var response = await fetch(
         NUGET_API + '?q=owner:' + ORG + '&take=' + take + '&skip=' + skip + '&prerelease=false'
       );
@@ -198,8 +280,6 @@
       }
 
       var pageData = await response.json();
-
-      console.log('Resposta recebida:', pageData);
       var currentPagePackages = Array.isArray(pageData.data) ? pageData.data : [];
       totalHits = typeof pageData.totalHits === 'number' ? pageData.totalHits : allPackages.length + currentPagePackages.length;
 
@@ -267,23 +347,16 @@
       var data = await fetchNugetPackages();
       var packages = data.data || [];
 
+      setupPackageControls();
+
       // Ordena os pacotes por título (ordem alfabética) para garantir uma apresentação consistente
       packages.sort(function (/** @type {{ title: string; }} */ a, /** @type {{ title: string; }} */ b) {
         return a.title.localeCompare(b.title);
       });
 
-      var grid = document.getElementById('nugetGrid');
-
-      // Verifica se o elemento do grid existe antes de tentar renderizar os pacotes
-      if (grid) {
-        grid.innerHTML = '';
-
-        // Itera sobre os pacotes e cria um card para cada um, adicionando-os ao grid
-        packages.forEach(function (/** @type {{ id: string; totalDownloads: number; version: string; description: any; }} */ pkg) {
-          // @ts-ignore
-          grid.appendChild(createPackageCard(pkg));
-        });
-      }
+      packagesState.all = packages;
+      packagesState.visibleCount = INITIAL_PACKAGES;
+      renderPackages();
 
       // Calcula o total de downloads somando os downloads de cada pacote
       var totalDownloads = packages.reduce(function (/** @type {number} */ sum, /** @type {{ totalDownloads: number; }} */ p) {
@@ -297,7 +370,6 @@
         meta.textContent = packages.length + ' pacotes · ' + formatDownloads(totalDownloads) + ' downloads';
       }
 
-      initReveal();
     } catch (err) {
       var grid = document.getElementById('nugetGrid');
 
@@ -313,6 +385,49 @@
           '</p>' +
           '</div>';
       }
+    }
+  }
+
+  // ---- Render packages ----------
+  function renderPackages () {
+    var grid = document.getElementById('nugetGrid');
+    var showMoreBtn = document.getElementById('nugetShowMore');
+
+    if (!grid) {
+      return;
+    }
+
+    var searchTerm = packagesState.searchTerm;
+    packagesState.filtered = packagesState.all.filter(function (pkg) {
+      var name = normalizeText(pkg.id);
+      var description = normalizeText(pkg.description);
+
+      return searchTerm === '' || name.indexOf(searchTerm) !== -1 || description.indexOf(searchTerm) !== -1;
+    });
+
+    grid.innerHTML = '';
+
+    var visiblePackages = packagesState.filtered.slice(0, packagesState.visibleCount > 0 ? packagesState.visibleCount : INITIAL_PACKAGES);
+
+    if (visiblePackages.length === 0) {
+      grid.innerHTML =
+        '<div class="packages__loading">' +
+        '<p>Nenhum pacote encontrado para sua busca.</p>' +
+        '</div>';
+    } else {
+      visiblePackages.forEach(function (pkg) {
+        // @ts-ignore
+        grid.appendChild(createPackageCard(pkg));
+      });
+
+      initReveal();
+    }
+
+    // Verifica se o botão de mostrar mais existe antes de tentar atualizar sua visibilidade e texto
+    if (showMoreBtn) {
+      var remaining = packagesState.filtered.length - visiblePackages.length;
+      showMoreBtn.style.display = remaining <= 0 ? 'none' : '';
+      showMoreBtn.textContent = remaining > 0 ? 'Mostrar mais (' + remaining + ')' : 'Mostrar mais';
     }
   }
 
@@ -460,6 +575,10 @@
     var filtersContainer = document.getElementById('projectFilters');
     var categoriesSet = /** @type {Record<string, boolean>} */ ({});
 
+    if (!filtersContainer) {
+      return;
+    }
+
     // Itera sobre os repositórios para coletar as categorias únicas presentes nos dados
     repos.forEach(function (repo) {
       var cat = getCategory(repo.name);
@@ -467,22 +586,25 @@
     });
 
     // Ordena as categorias e cria um botão de filtro para cada uma, adicionando-os ao container de filtros
-    var cats = Object.keys(categoriesSet).sort();
+    var cats = ['all'].concat(Object.keys(categoriesSet).sort());
+    var safeFiltersContainer = filtersContainer;
+    safeFiltersContainer.innerHTML = '';
+
     cats.forEach(function (cat) {
       var btn = document.createElement('button');
       btn.className = 'filter-btn';
       btn.dataset.filter = cat;
-      btn.textContent = cat;
+      btn.textContent = cat === 'all' ? 'Todos' : cat;
 
-      // Verifica se o container de filtros existe antes de tentar adicionar os botões de filtro
-      if (filtersContainer) {
-        filtersContainer.appendChild(btn);
+      if (cat === projectsState.activeCategory) {
+        btn.classList.add('active');
       }
+
+      safeFiltersContainer.appendChild(btn);
     });
 
     // Verifica se o container de filtros existe antes de adicionar o listener de clique
-    if (filtersContainer) {
-      var safeFiltersContainer = filtersContainer;
+    if (safeFiltersContainer.dataset.bound !== 'true') {
 
       // Adiciona um listener de clique ao container de filtros para lidar com a lógica de filtragem dos projetos com base na categoria selecionada
       safeFiltersContainer.addEventListener('click', function (e) {
@@ -498,28 +620,69 @@
         }
 
         var filter = target.dataset.filter;
+        if (!filter) {
+          return;
+        }
 
-        // Remove a classe 'active' de todos os botões de filtro e adiciona a classe 'active' ao botão clicado para indicar qual filtro está ativo
-        safeFiltersContainer.querySelectorAll('.filter-btn').forEach(function (btn) {
-          btn.classList.remove('active');
-        });
-        target.classList.add('active');
+        projectsState.activeCategory = filter;
+        projectsState.visibleCount = INITIAL_PROJECTS;
+        renderProjects();
+      });
 
-        // Busca todos elementos que tenham a classe 'project-card'
-        var cards = document.querySelectorAll('.project-card');
-        // Itera sobre os cards de projeto e exibe ou oculta cada card com base no filtro selecionado
-        cards.forEach(function (card) {
-          var cardEl = /** @type {HTMLElement} */ (card);
+      safeFiltersContainer.dataset.bound = 'true';
+    }
+  }
 
-          // Verifica se o filtro é 'all' ou se a categoria do card corresponde ao filtro selecionado, e exibe ou oculta o card de acordo 
-          if (filter === 'all' || cardEl.dataset.category === filter) {
-            cardEl.style.display = '';
-            setTimeout(function () { cardEl.classList.add('visible'); }, 10);
-          } else {
-            cardEl.style.display = 'none';
-            cardEl.classList.remove('visible');
-          }
-        });
+  // ---- Render projects ----------
+  function renderProjects () {
+    var grid = document.getElementById('projectsGrid');
+    var showMoreBtn = document.getElementById('projectsShowMore');
+    var filtersContainer = document.getElementById('projectFilters');
+
+    if (!grid) {
+      return;
+    }
+
+    var activeCategory = projectsState.activeCategory;
+    var searchTerm = projectsState.searchTerm;
+    projectsState.filtered = projectsState.all.filter(function (repo) {
+      var category = getCategory(repo.name);
+      var name = normalizeText(repo.name);
+      var description = normalizeText(repo.description);
+      var categoryMatch = activeCategory === 'all' || category === activeCategory;
+      var searchMatch = searchTerm === '' || name.indexOf(searchTerm) !== -1 || description.indexOf(searchTerm) !== -1;
+
+      return categoryMatch && searchMatch;
+    });
+
+    grid.innerHTML = '';
+
+    var visibleRepos = projectsState.filtered.slice(0, projectsState.visibleCount);
+
+    if (visibleRepos.length === 0) {
+      grid.innerHTML =
+        '<div class="projects__loading">' +
+        '<p>Nenhum projeto encontrado para os filtros atuais.</p>' +
+        '</div>';
+    } else {
+      visibleRepos.forEach(function (repo) {
+        // @ts-ignore
+        grid.appendChild(createProjectCard(repo));
+      });
+
+      initReveal();
+    }
+
+    if (showMoreBtn) {
+      var remaining = projectsState.filtered.length - visibleRepos.length;
+      showMoreBtn.style.display = remaining <= 0 ? 'none' : '';
+      showMoreBtn.textContent = remaining > 0 ? 'Mostrar mais (' + remaining + ')' : 'Mostrar mais';
+    }
+
+    if (filtersContainer) {
+      filtersContainer.querySelectorAll('.filter-btn').forEach(function (btn) {
+        var btnEl = /** @type {HTMLElement} */ (btn);
+        btnEl.classList.toggle('active', btnEl.dataset.filter === activeCategory);
       });
     }
   }
@@ -564,6 +727,8 @@
   // ---- Init ---------------------
   async function init () {
     try {
+      setupProjectControls();
+
       var repos = await fetchRepos();
 
       // Filtra os repositórios para excluir o repositório do site
@@ -586,22 +751,10 @@
       });
 
       updateStats(repos);
+      projectsState.all = repos;
+      projectsState.visibleCount = INITIAL_PROJECTS;
       renderFilters(repos);
-
-      var grid = document.getElementById('projectsGrid');
-
-      // Verifica se o elemento do grid de projetos existe antes de tentar renderizar os cards de projeto
-      if (grid) {
-        grid.innerHTML = '';
-
-        // Itera sobre os repositórios e cria um card para cada um, adicionando-os ao grid de projetos
-        repos.forEach(function (/** @type {{ html_url: string; name: string; language: string; stargazers_count: number; open_issues_count: number; license: { spdx_id: string; }; description: any; }} */ repo) {
-          // @ts-ignore
-          grid.appendChild(createProjectCard(repo));
-        });
-      }
-
-      initReveal();
+      renderProjects();
     } catch (err) {
       var grid = document.getElementById('projectsGrid');
 
