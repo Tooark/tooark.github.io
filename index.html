@@ -168,6 +168,16 @@
             problemas reais do dia a dia de desenvolvimento e operações.
           </p>
         </div>
+        <div class="list-controls">
+          <input
+            type="search"
+            id="projectSearch"
+            class="list-search"
+            placeholder="Buscar projetos por nome ou descrição"
+            aria-label="Buscar projetos"
+            autocomplete="off"
+          />
+        </div>
         <div class="projects__filters" id="projectFilters">
           <button class="filter-btn active" data-filter="all">Todos</button>
         </div>
@@ -176,6 +186,11 @@
             <div class="spinner"></div>
             <p>Carregando projetos...</p>
           </div>
+        </div>
+        <div class="list-more-wrap">
+          <button class="btn btn--outline list-more" id="projectsShowMore" type="button" style="display: none;">
+            Mostrar mais
+          </button>
         </div>
       </div>
     </section>
@@ -205,11 +220,26 @@
               rel="noopener noreferrer"
             >Ver todos &rarr;</a>
           </div>
+          <div class="list-controls list-controls--packages">
+            <input
+              type="search"
+              id="nugetSearch"
+              class="list-search"
+              placeholder="Buscar pacotes por nome ou descrição"
+              aria-label="Buscar pacotes NuGet"
+              autocomplete="off"
+            />
+          </div>
           <div class="packages__grid" id="nugetGrid">
             <div class="packages__loading">
               <div class="spinner"></div>
               <p>Carregando pacotes...</p>
             </div>
+          </div>
+          <div class="list-more-wrap">
+            <button class="btn btn--outline list-more" id="nugetShowMore" type="button" style="display: none;">
+              Mostrar mais
+            </button>
           </div>
         </div>
 
