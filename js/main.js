@@ -139,14 +139,15 @@
     // Adiciona a classe 'reveal' a todos os elementos que devem ter o efeito de revelação
     elements.forEach(function (el) { el.classList.add('reveal'); });
 
-    // Cria um IntersectionObserver para observar quando os elementos entram na viewport e adicionar a classe 'visible' para ativar a animação de revelação
+    // Cria um IntersectionObserver para alternar a classe 'visible' sempre que o elemento entra ou sai da viewport
     var observer = new IntersectionObserver(function (entries) {
-
+      // Itera sobre as entradas observadas para verificar se cada elemento está intersectando com a viewport
       entries.forEach(function (entry) {
-        // Verifica se o elemento está intersectando a viewport (ou seja, visível para o usuário)
+        // Sempre que entrar na viewport aplica a animação, e ao sair remove para permitir nova animação na próxima entrada
         if (entry.isIntersecting) {
           entry.target.classList.add('visible');
-          observer.unobserve(entry.target);
+        } else {
+          entry.target.classList.remove('visible');
         }
       });
     }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
@@ -173,15 +174,49 @@
   }
 
   // ---- Fetch NuGet packages -----
+  /**
+   * @returns {Promise<{ data: any[]; totalHits: number }>}
+   */
   async function fetchNugetPackages () {
-    var response = await fetch(NUGET_API + '?q=owner:' + ORG + '&take=50&prerelease=false');
+    var take = 50;
+    var skip = 0;
+    var totalHits = Number.POSITIVE_INFINITY;
+    /** @type {any[]} */
+    var allPackages = [];
 
-    // Verifica se a resposta da API foi bem-sucedida, caso contrário, lança um erro para ser tratado posteriormente
-    if (!response.ok) {
-      throw new Error('Falha ao carregar pacotes NuGet');
+    // Realiza requisições paginadas para a API do NuGet
+    while (allPackages.length < totalHits) {
+      console.log('Buscando pacotes NuGet...' + NUGET_API + '?q=owner:' + ORG + '&take=' + take + '&skip=' + skip + '&prerelease=false');
+
+      var response = await fetch(
+        NUGET_API + '?q=owner:' + ORG + '&take=' + take + '&skip=' + skip + '&prerelease=false'
+      );
+
+      // Verifica se a resposta da API foi bem-sucedida, caso contrário, lança um erro para ser tratado posteriormente
+      if (!response.ok) {
+        throw new Error('Falha ao carregar pacotes NuGet');
+      }
+
+      var pageData = await response.json();
+
+      console.log('Resposta recebida:', pageData);
+      var currentPagePackages = Array.isArray(pageData.data) ? pageData.data : [];
+      totalHits = typeof pageData.totalHits === 'number' ? pageData.totalHits : allPackages.length + currentPagePackages.length;
+
+      allPackages = allPackages.concat(currentPagePackages);
+
+      // Se vier menos itens que o tamanho da página, não há mais páginas para buscar
+      if (currentPagePackages.length < take) {
+        break;
+      }
+
+      skip += take;
     }
 
-    return response.json();
+    return {
+      data: allPackages,
+      totalHits: allPackages.length
+    };
   }
 
   // ---- Create package card ------
@@ -282,15 +317,37 @@
   }
 
   // ---- Fetch repos --------------
+  /**
+   * @returns {Promise<any[]>}
+   */
   async function fetchRepos () {
-    var response = await fetch(API + '/orgs/' + ORG + '/repos?per_page=100&sort=updated&type=public');
+    /** @type {any[]} */
+    var repos = [];
+    var page = 1;
+    var perPage = 100;
+    var hasNextPage = true;
 
-    // Verifica se a resposta da API foi bem-sucedida, caso contrário, lança um erro para ser tratado posteriormente
-    if (!response.ok) {
-      throw new Error('Falha ao carregar repositórios');
+    // Realiza requisições paginadas para a API do GitHub
+    while (hasNextPage) {
+      var response = await fetch(
+        API +
+        '/orgs/' + ORG + '/repos?per_page=' + perPage + '&page=' + page + '&sort=updated&type=public'
+      );
+
+      // Verifica se a resposta da API foi bem-sucedida, caso contrário, lança um erro para ser tratado posteriormente
+      if (!response.ok) {
+        throw new Error('Falha ao carregar repositórios');
+      }
+
+      /** @type {any[]} */
+      var currentPageRepos = await response.json();
+      repos = repos.concat(currentPageRepos);
+
+      hasNextPage = currentPageRepos.length === perPage;
+      page += 1;
     }
 
-    return response.json();
+    return repos;
   }
 
   // ---- Get category for repo ----
@@ -469,7 +526,7 @@
 
   // ---- Update stats -------------
   /**
-   * @param {{ forEach: (arg0: (repo: any) => void) => void; length: string | null; }} repos
+    * @param {{ stargazers_count: number; language: string | null; }[]} repos
    */
   function updateStats (repos) {
     var totalStars = 0;
@@ -488,7 +545,7 @@
     var statRepos = document.getElementById('statRepos');
     // Verifica se o elemento de estatísticas de repositórios existe antes de tentar definir seu conteúdo
     if (statRepos) {
-      statRepos.textContent = repos.length;
+      statRepos.textContent = String(repos.length);
     }
 
     var statStars = document.getElementById('statStars');
