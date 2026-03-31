@@ -63,11 +63,7 @@
           <span>Tooark</span>
         </a>
         <nav class="header__nav" id="nav">
-          <button
-            class="header__close"
-            id="navClose"
-            aria-label="Fechar menu"
-          >
+          <button class="header__close" id="navClose" aria-label="Fechar menu">
             <span></span><span></span>
           </button>
           <a href="#projects" class="header__link">Projetos</a>
@@ -188,7 +184,12 @@
           </div>
         </div>
         <div class="list-more-wrap">
-          <button class="btn btn--outline list-more" id="projectsShowMore" type="button" style="display: none;">
+          <button
+            class="btn btn--outline list-more"
+            id="projectsShowMore"
+            type="button"
+            style="display: none"
+          >
             Mostrar mais
           </button>
         </div>
@@ -201,7 +202,8 @@
         <div class="section__header">
           <h2 class="section__title">Pacotes</h2>
           <p class="section__desc">
-            Bibliotecas publicadas em registros de pacotes para uso direto em suas aplicações.
+            Bibliotecas publicadas em registros de pacotes para uso direto em
+            suas aplicações.
           </p>
         </div>
 
@@ -218,9 +220,13 @@
               class="packages__registry-link"
               target="_blank"
               rel="noopener noreferrer"
-            >Ver todos &rarr;</a>
+              >Ver todos &rarr;</a
+            >
           </div>
-          <div class="list-controls list-controls--packages">
+          <div
+            class="list-controls list-controls--packages"
+            style="display: flex; gap: 12px; align-items: center"
+          >
             <input
               type="search"
               id="nugetSearch"
@@ -228,7 +234,17 @@
               placeholder="Buscar pacotes por nome ou descrição"
               aria-label="Buscar pacotes NuGet"
               autocomplete="off"
+              style="flex: 1 1 0"
             />
+            <select
+              id="nugetSort"
+              class="list-sort"
+              aria-label="Ordenar pacotes"
+              style="min-width: 140px"
+            >
+              <option value="downloads" selected>Downloads</option>
+              <option value="name">Nome</option>
+            </select>
           </div>
           <div class="packages__grid" id="nugetGrid">
             <div class="packages__loading">
@@ -237,7 +253,12 @@
             </div>
           </div>
           <div class="list-more-wrap">
-            <button class="btn btn--outline list-more" id="nugetShowMore" type="button" style="display: none;">
+            <button
+              class="btn btn--outline list-more"
+              id="nugetShowMore"
+              type="button"
+              style="display: none"
+            >
               Mostrar mais
             </button>
           </div>
@@ -248,12 +269,57 @@
           <div class="packages__registry-header">
             <span class="registry-badge registry-badge--npm">npm</span>
             <div class="packages__registry-info">
-              <h3 class="packages__registry-title">Pacotes JavaScript / TypeScript</h3>
+              <h3 class="packages__registry-title">
+                Pacotes JavaScript / TypeScript
+              </h3>
+              <span class="packages__registry-meta" id="npmMeta"></span>
             </div>
-            <span class="badge">Em breve</span>
+            <a
+              href="https://www.npmjs.com/search?q=sanitized_name%3A%40tooark"
+              class="packages__registry-link"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Ver todos &rarr;</a
+            >
           </div>
-          <div class="packages__empty">
-            <p>Pacotes npm em desenvolvimento. Aguarde novidades!</p>
+          <div
+            class="list-controls list-controls--packages"
+            style="display: flex; gap: 12px; align-items: center"
+          >
+            <input
+              type="search"
+              id="npmSearch"
+              class="list-search"
+              placeholder="Buscar pacotes por nome ou descrição"
+              aria-label="Buscar pacotes npm"
+              autocomplete="off"
+              style="flex: 1 1 0"
+            />
+            <select
+              id="npmSort"
+              class="list-sort"
+              aria-label="Ordenar pacotes"
+              style="min-width: 140px"
+            >
+              <option value="downloads" selected>Downloads</option>
+              <option value="name">Nome</option>
+            </select>
+          </div>
+          <div class="packages__grid" id="npmGrid">
+            <div class="packages__loading">
+              <div class="spinner"></div>
+              <p>Carregando pacotes...</p>
+            </div>
+          </div>
+          <div class="list-more-wrap">
+            <button
+              class="btn btn--outline list-more"
+              id="npmShowMore"
+              type="button"
+              style="display: none"
+            >
+              Mostrar mais
+            </button>
           </div>
         </div>
       </div>
@@ -265,16 +331,12 @@
         <div class="section__header">
           <h2 class="section__title">Contribuidores</h2>
           <p class="section__desc">
-            Pessoas que ajudam a construir e evoluir os projetos open source da Tooark.
+            Pessoas que ajudam a construir e evoluir os projetos open source da
+            Tooark.
           </p>
         </div>
         <div class="contributors__grid">
-          <a
-            href="https://github.com/paulosfjunior"
-            class="contributor-card"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <div class="contributor-card">
             <img
               class="contributor-card__avatar"
               src="https://github.com/paulosfjunior.png?size=200"
@@ -285,15 +347,48 @@
             />
             <h3 class="contributor-card__name">Paulo Freitas</h3>
             <p class="contributor-card__username">@paulosfjunior</p>
-            <span class="contributor-card__link">Ver perfil &rarr;</span>
-          </a>
+            <div class="contributor-card__actions">
+              <a
+                href="https://github.com/paulosfjunior"
+                class="contributor-card__action"
+                target="_blank"
+                rel="noopener noreferrer"
+                >GitHub
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"
+                  />
+                </svg>
+              </a>
+              <a
+                href="https://www.linkedin.com/in/paulosfjunior/"
+                class="contributor-card__action contributor-card__action--linkedin"
+                target="_blank"
+                rel="noopener noreferrer"
+                >LinkedIn
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 34 34"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    fill="#0a66c2"
+                    d="M34 2.5v29a2.5 2.5 0 0 1-2.5 2.5h-29A2.5 2.5 0 0 1 0 31.5v-29A2.5 2.5 0 0 1 2.5 0h29A2.5 2.5 0 0 1 34 2.5M10 13H5v16h5zm.45-5.5a2.88 2.88 0 0 0-2.86-2.9H7.5a2.9 2.9 0 0 0 0 5.8 2.88 2.88 0 0 0 2.95-2.81zM29 19.28c0-4.81-3.06-6.68-6.1-6.68a5.7 5.7 0 0 0-5.06 2.58h-.14V13H13v16h5v-8.51a3.32 3.32 0 0 1 3-3.58h.19c1.59 0 2.77 1 2.77 3.52V29h5z"
+                  ></path>
+                </svg>
+              </a>
+            </div>
+          </div>
 
-          <a
-            href="https://github.com/stenioignacio"
-            class="contributor-card"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <div class="contributor-card">
             <img
               class="contributor-card__avatar"
               src="https://github.com/stenioignacio.png?size=200"
@@ -304,15 +399,48 @@
             />
             <h3 class="contributor-card__name">Stenio Ignacio</h3>
             <p class="contributor-card__username">@stenioignacio</p>
-            <span class="contributor-card__link">Ver perfil &rarr;</span>
-          </a>
+            <div class="contributor-card__actions">
+              <a
+                href="https://github.com/stenioignacio"
+                class="contributor-card__action"
+                target="_blank"
+                rel="noopener noreferrer"
+                >GitHub
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"
+                  />
+                </svg>
+              </a>
+              <a
+                href="https://www.linkedin.com/in/stenio-ignacio-devops/"
+                class="contributor-card__action contributor-card__action--linkedin"
+                target="_blank"
+                rel="noopener noreferrer"
+                >LinkedIn
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 34 34"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    fill="#0a66c2"
+                    d="M34 2.5v29a2.5 2.5 0 0 1-2.5 2.5h-29A2.5 2.5 0 0 1 0 31.5v-29A2.5 2.5 0 0 1 2.5 0h29A2.5 2.5 0 0 1 34 2.5M10 13H5v16h5zm.45-5.5a2.88 2.88 0 0 0-2.86-2.9H7.5a2.9 2.9 0 0 0 0 5.8 2.88 2.88 0 0 0 2.95-2.81zM29 19.28c0-4.81-3.06-6.68-6.1-6.68a5.7 5.7 0 0 0-5.06 2.58h-.14V13H13v16h5v-8.51a3.32 3.32 0 0 1 3-3.58h.19c1.59 0 2.77 1 2.77 3.52V29h5z"
+                  ></path>
+                </svg>
+              </a>
+            </div>
+          </div>
 
-          <a
-            href="https://github.com/davidutramn"
-            class="contributor-card"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <div class="contributor-card">
             <img
               class="contributor-card__avatar"
               src="https://github.com/davidutramn.png?size=200"
@@ -323,8 +451,46 @@
             />
             <h3 class="contributor-card__name">Davi Dutra</h3>
             <p class="contributor-card__username">@davidutramn</p>
-            <span class="contributor-card__link">Ver perfil &rarr;</span>
-          </a>
+            <div class="contributor-card__actions">
+              <a
+                href="https://github.com/davidutramn"
+                class="contributor-card__action"
+                target="_blank"
+                rel="noopener noreferrer"
+                >GitHub
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"
+                  />
+                </svg>
+              </a>
+              <a
+                href="https://www.linkedin.com/in/davidutramn/"
+                class="contributor-card__action contributor-card__action--linkedin"
+                target="_blank"
+                rel="noopener noreferrer"
+                >LinkedIn
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 34 34"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    fill="#0a66c2"
+                    d="M34 2.5v29a2.5 2.5 0 0 1-2.5 2.5h-29A2.5 2.5 0 0 1 0 31.5v-29A2.5 2.5 0 0 1 2.5 0h29A2.5 2.5 0 0 1 34 2.5M10 13H5v16h5zm.45-5.5a2.88 2.88 0 0 0-2.86-2.9H7.5a2.9 2.9 0 0 0 0 5.8 2.88 2.88 0 0 0 2.95-2.81zM29 19.28c0-4.81-3.06-6.68-6.1-6.68a5.7 5.7 0 0 0-5.06 2.58h-.14V13H13v16h5v-8.51a3.32 3.32 0 0 1 3-3.58h.19c1.59 0 2.77 1 2.77 3.52V29h5z"
+                  ></path>
+                </svg>
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -468,7 +634,8 @@
             </div>
             <h3 class="service-card__title">Consultoria DevOps</h3>
             <p class="service-card__desc">
-              Implementação de pipelines CI/CD, conteinerização e automação de infraestrutura.
+              Implementação de pipelines CI/CD, conteinerização e automação de
+              infraestrutura.
             </p>
           </div>
           <div class="service-card">
@@ -488,7 +655,8 @@
             </div>
             <h3 class="service-card__title">Segurança &amp; Compliance</h3>
             <p class="service-card__desc">
-              Análise de vulnerabilidades, quality gates e conformidade de código com melhores práticas.
+              Análise de vulnerabilidades, quality gates e conformidade de
+              código com melhores práticas.
             </p>
           </div>
           <div class="service-card">
@@ -512,7 +680,8 @@
             </div>
             <h3 class="service-card__title">Monitoramento</h3>
             <p class="service-card__desc">
-              Setup completo de observabilidade com OpenTelemetry, dashboards e alertas inteligentes.
+              Setup completo de observabilidade com OpenTelemetry, dashboards e
+              alertas inteligentes.
             </p>
           </div>
         </div>
@@ -530,7 +699,12 @@
       <div class="container footer__inner">
         <div class="footer__brand">
           <a href="#" class="footer__logo" aria-label="Tooark Home">
-            <img src="media/logo-dark.svg" alt="Tooark" width="28" height="28" />
+            <img
+              src="media/logo-dark.svg"
+              alt="Tooark"
+              width="28"
+              height="28"
+            />
             <span>Tooark</span>
           </a>
           <p class="footer__tagline">

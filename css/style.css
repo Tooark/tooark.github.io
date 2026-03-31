@@ -362,6 +362,33 @@ button {
   transition: border-color var(--transition), box-shadow var(--transition);
 }
 
+.list-sort {
+  height: 44px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  padding: 0 36px 0 14px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  transition: border-color var(--transition), box-shadow var(--transition);
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+  min-width: 140px;
+  background-image: url('data:image/svg+xml;utf8,<svg fill="%2371717a" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 18px 18px;
+}
+
+.list-sort:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-bg);
+}
+
 .list-search::placeholder {
   color: var(--color-text-muted);
 }
@@ -823,6 +850,43 @@ button {
   font-size: 0.813rem;
   color: var(--color-primary);
   font-weight: 600;
+}
+
+/* Actions inside contributor cards (GitHub / LinkedIn) */
+.contributor-card__actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.contributor-card__action {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 0.813rem;
+  font-weight: 600;
+  color: var(--color-text);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  transition: all var(--transition);
+}
+
+.contributor-card__action svg {
+  opacity: 0.9;
+}
+
+.contributor-card__action:hover {
+  border-color: var(--color-border-light);
+  background: var(--color-surface);
+  transform: translateY(-2px);
+}
+
+.contributor-card__action--linkedin {
+  color: #0A66C2;
+  border-color: rgba(10,102,194,0.12);
+  background: rgba(10,102,194,0.04);
 }
 
 .packages__loading {
