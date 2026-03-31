@@ -9,10 +9,13 @@
   const API = 'https://api.github.com';
   const SITE_REPO = 'tooark.github.io';
   const NUGET_API = 'https://azuresearch-usnc.nuget.org/query';
+  const NPM_API = 'https://registry.npmjs.org/-/v1/search';
   const INITIAL_PROJECTS = 9;
   const PROJECTS_STEP = 9;
   const INITIAL_PACKAGES = 9;
   const PACKAGES_STEP = 9;
+  const INITIAL_NPM_PACKAGES = 9;
+  const NPM_PACKAGES_STEP = 9;
 
   /** @type {IntersectionObserver | null} */
   var revealObserver = null;
@@ -24,12 +27,61 @@
     activeCategory: 'all',
     searchTerm: '',
   };
-  /** @type {{ all: any[]; filtered: any[]; visibleCount: number; searchTerm: string; }} */
+  /** @type {{ all: any[]; filtered: any[]; visibleCount: number; searchTerm: string; sortBy: 'downloads' | 'name'; }} */
   var packagesState = {
     all: [],
     filtered: [],
     visibleCount: INITIAL_PACKAGES,
     searchTerm: '',
+    sortBy: 'downloads',
+  };
+
+  /**
+   * @typedef {{
+   *  name: string;
+   *  version: string;
+   *  description: string;
+   *  keywords: string[];
+   *  downloadsMonthly: number;
+   *  npmUrl: string;
+   * }} NpmFrontendPackage
+   */
+
+  /**
+   * @typedef {{ monthly: number; weekly: number; }} NpmDownloads
+   * @typedef {{ email: string; username: string; }} NpmUser
+   * @typedef {{ homepage?: string; repository?: string; bugs?: string; npm?: string; }} NpmLinks
+   * @typedef {{
+   *  name: string;
+   *  keywords?: string[];
+   *  version: string;
+   *  description?: string;
+   *  sanitized_name?: string;
+   *  publisher?: NpmUser;
+   *  maintainers?: NpmUser[];
+   *  license?: string;
+   *  date?: string;
+   *  links?: NpmLinks;
+   * }} NpmRegistryPackage
+   * @typedef {{
+   *  downloads: NpmDownloads;
+   *  dependents?: number;
+   *  updated?: string;
+   *  searchScore?: number;
+   *  package: NpmRegistryPackage;
+   *  score?: { final?: number; detail?: { popularity?: number; quality?: number; maintenance?: number; }; };
+   *  flags?: { insecure?: number; };
+   * }} NpmSearchObject
+   * @typedef {{ objects: NpmSearchObject[]; total: number; time?: string; }} NpmSearchResponse
+   */
+
+  /** @type {{ all: NpmFrontendPackage[]; filtered: NpmFrontendPackage[]; visibleCount: number; searchTerm: string; sortBy: 'downloads' | 'name'; }} */
+  var npmPackagesState = {
+    all: [],
+    filtered: [],
+    visibleCount: INITIAL_NPM_PACKAGES,
+    searchTerm: '',
+    sortBy: 'downloads',
   };
 
   // Language colors (GitHub style)
@@ -191,10 +243,12 @@
     return (value || '').toLowerCase().trim();
   }
 
+  // ---- Setup controls -----------
   function setupProjectControls () {
     var searchInput = /** @type {HTMLInputElement | null} */ (document.getElementById('projectSearch'));
     var showMoreBtn = document.getElementById('projectsShowMore');
 
+    // Verifica se o elemento de busca existe e ainda não tem um listener de input vinculado, para evitar múltiplos listeners
     if (searchInput && searchInput.dataset.bound !== 'true') {
       var safeSearchInput = searchInput;
 
@@ -206,6 +260,7 @@
       searchInput.dataset.bound = 'true';
     }
 
+    // Verifica se o botão de mostrar mais existe e ainda não tem um listener de clique vinculado, para evitar múltiplos listeners
     if (showMoreBtn && showMoreBtn.dataset.bound !== 'true') {
       showMoreBtn.addEventListener('click', function () {
         projectsState.visibleCount += PROJECTS_STEP;
@@ -215,10 +270,24 @@
     }
   }
 
+  // ---- Setup package controls ---
   function setupPackageControls () {
+        var sortSelect = /** @type {HTMLSelectElement | null} */ (document.getElementById('nugetSort'));
+
+        // Ordenação NuGet
+        if (sortSelect && sortSelect.dataset.bound !== 'true') {
+          sortSelect.addEventListener('change', function () {
+            if (sortSelect) {
+              packagesState.sortBy = sortSelect.value === 'name' ? 'name' : 'downloads';
+              renderPackages();
+            }
+          });
+          sortSelect.dataset.bound = 'true';
+        }
     var searchInput = /** @type {HTMLInputElement | null} */ (document.getElementById('nugetSearch'));
     var showMoreBtn = document.getElementById('nugetShowMore');
 
+    // Verifica se o elemento de busca existe e ainda não tem um listener de input vinculado, para evitar múltiplos listeners
     if (searchInput && searchInput.dataset.bound !== 'true') {
       var safeSearchInput = searchInput;
 
@@ -230,10 +299,38 @@
       searchInput.dataset.bound = 'true';
     }
 
+    // Verifica se o botão de mostrar mais existe e ainda não tem um listener de clique vinculado, para evitar múltiplos listeners
     if (showMoreBtn && showMoreBtn.dataset.bound !== 'true') {
       showMoreBtn.addEventListener('click', function () {
         packagesState.visibleCount += PACKAGES_STEP;
         renderPackages();
+      });
+      showMoreBtn.dataset.bound = 'true';
+    }
+  }
+
+  // ---- Setup npm controls ------
+  function setupNpmControls () {
+    var searchInput = /** @type {HTMLInputElement | null} */ (document.getElementById('npmSearch'));
+    var showMoreBtn = document.getElementById('npmShowMore');
+
+    // Verifica se o elemento de busca existe e ainda não tem um listener de input vinculado, para evitar múltiplos listeners
+    if (searchInput && searchInput.dataset.bound !== 'true') {
+      var safeSearchInput = searchInput;
+
+      searchInput.addEventListener('input', function () {
+        npmPackagesState.searchTerm = normalizeText(safeSearchInput.value);
+        npmPackagesState.visibleCount = INITIAL_NPM_PACKAGES;
+        renderNpmPackages();
+      });
+      searchInput.dataset.bound = 'true';
+    }
+
+    // Verifica se o botão de mostrar mais existe e ainda não tem um listener de clique vinculado, para evitar múltiplos listeners
+    if (showMoreBtn && showMoreBtn.dataset.bound !== 'true') {
+      showMoreBtn.addEventListener('click', function () {
+        npmPackagesState.visibleCount += NPM_PACKAGES_STEP;
+        renderNpmPackages();
       });
       showMoreBtn.dataset.bound = 'true';
     }
@@ -341,6 +438,51 @@
     return card;
   }
 
+  // ---- Create npm package card --
+  /**
+   * @param {NpmFrontendPackage} pkg
+   */
+  function createNpmPackageCard (pkg) {
+    var card = document.createElement('a');
+    card.href = pkg.npmUrl;
+    card.target = '_blank';
+    card.rel = 'noopener noreferrer';
+    card.className = 'package-card';
+
+    var tagsText = pkg.keywords.length > 0
+      ? pkg.keywords.slice(0, 3).join(' · ')
+      : 'JavaScript / TypeScript';
+
+    var downloadsHtml =
+      '<span class="package-card__meta-item">' +
+      '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' +
+      '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>' +
+      '<polyline points="7 10 12 15 17 10"/>' +
+      '<line x1="12" y1="15" x2="12" y2="3"/>' +
+      '</svg>' +
+      formatDownloads(pkg.downloadsMonthly) + ' downloads' +
+      '</span>';
+
+    var tagsHtml =
+      '<span class="package-card__meta-item">' +
+      '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">' +
+      '<path d="M20.59 13.41 11 3.83V3H3v8h.83l9.58 9.59a2 2 0 0 0 2.83 0l4.35-4.35a2 2 0 0 0 0-2.83z"/>' +
+      '<circle cx="7.5" cy="7.5" r="1.5"/>' +
+      '</svg>' +
+      tagsText +
+      '</span>';
+
+    card.innerHTML =
+      '<div class="package-card__header">' +
+      '<span class="package-card__name">' + pkg.name + '</span>' +
+      '<span class="package-card__version">v' + pkg.version + '</span>' +
+      '</div>' +
+      '<p class="package-card__desc">' + (pkg.description || 'Sem descrição disponível.') + '</p>' +
+      '<div class="package-card__meta">' + downloadsHtml + tagsHtml + '</div>';
+
+    return card;
+  }
+
   // ---- Init NuGet packages ------
   async function initNuget () {
     try {
@@ -349,9 +491,11 @@
 
       setupPackageControls();
 
-      // Ordena os pacotes por título (ordem alfabética) para garantir uma apresentação consistente
-      packages.sort(function (/** @type {{ title: string; }} */ a, /** @type {{ title: string; }} */ b) {
-        return a.title.localeCompare(b.title);
+      console.log({packages})
+
+      // Ordena os pacotes por total de downloads (ordem decrescente) para destacar os mais populares
+      packages.sort(function (/** @type {{ totalDownloads: number; }} */ a, /** @type {{ totalDownloads: number; }} */ b) {
+        return b.totalDownloads - a.totalDownloads;
       });
 
       packagesState.all = packages;
@@ -393,22 +537,47 @@
     var grid = document.getElementById('nugetGrid');
     var showMoreBtn = document.getElementById('nugetShowMore');
 
+    // Verifica se o elemento do grid existe antes de tentar renderizar os pacotes
     if (!grid) {
       return;
     }
 
     var searchTerm = packagesState.searchTerm;
+
     packagesState.filtered = packagesState.all.filter(function (pkg) {
       var name = normalizeText(pkg.id);
       var description = normalizeText(pkg.description);
-
       return searchTerm === '' || name.indexOf(searchTerm) !== -1 || description.indexOf(searchTerm) !== -1;
     });
+
+    // Ordenação dinâmica
+    if (packagesState.sortBy === 'name') {
+      packagesState.filtered.sort(function (a, b) {
+        return a.id.localeCompare(b.id, 'pt-BR', { sensitivity: 'base' });
+      });
+    } else {
+      packagesState.filtered.sort(function (a, b) {
+        return (b.totalDownloads || 0) - (a.totalDownloads || 0);
+      });
+    }
+    var sortSelect = /** @type {HTMLSelectElement | null} */ (document.getElementById('npmSort'));
+
+    // Ordenação npm
+    if (sortSelect && sortSelect.dataset.bound !== 'true') {
+      sortSelect.addEventListener('change', function () {
+        if (sortSelect) {
+          npmPackagesState.sortBy = sortSelect.value === 'name' ? 'name' : 'downloads';
+          renderNpmPackages();
+        }
+      });
+      sortSelect.dataset.bound = 'true';
+    }
 
     grid.innerHTML = '';
 
     var visiblePackages = packagesState.filtered.slice(0, packagesState.visibleCount > 0 ? packagesState.visibleCount : INITIAL_PACKAGES);
 
+    // Verifica se há pacotes visíveis para renderizar, caso contrário, exibe uma mensagem indicando que nenhum pacote foi encontrado para a busca atual
     if (visiblePackages.length === 0) {
       grid.innerHTML =
         '<div class="packages__loading">' +
@@ -426,6 +595,161 @@
     // Verifica se o botão de mostrar mais existe antes de tentar atualizar sua visibilidade e texto
     if (showMoreBtn) {
       var remaining = packagesState.filtered.length - visiblePackages.length;
+      showMoreBtn.style.display = remaining <= 0 ? 'none' : '';
+      showMoreBtn.textContent = remaining > 0 ? 'Mostrar mais (' + remaining + ')' : 'Mostrar mais';
+    }
+  }
+
+  // ---- Fetch npm packages -------
+  /**
+   * @returns {Promise<NpmFrontendPackage[]>}
+   */
+  async function fetchNpmPackages () {
+    var from = 0;
+    var size = 100;
+    var total = Number.POSITIVE_INFINITY;
+    /** @type {NpmFrontendPackage[]} */
+    var allPackages = [];
+
+    // Realiza requisições paginadas para a API do npm
+    while (from < total) {
+      var response = await fetch(
+        NPM_API + '?text=sanitized_name:@' + encodeURIComponent(ORG.toLowerCase()) + '&size=' + size + '&from=' + from
+      );
+
+      // Verifica se a resposta da API foi bem-sucedida, caso contrário, lança um erro para ser tratado posteriormente
+      if (!response.ok) {
+        throw new Error('Falha ao carregar pacotes npm');
+      }
+
+      var pageData = /** @type {NpmSearchResponse} */ (await response.json());
+      var objects = Array.isArray(pageData.objects) ? pageData.objects : [];
+      total = typeof pageData.total === 'number' ? pageData.total : objects.length;
+
+      var packages = objects
+        .map(function (obj) {
+          var registryPkg = obj.package;
+          var keywords = Array.isArray(registryPkg.keywords) ? registryPkg.keywords : [];
+          var monthlyDownloads = obj.downloads && typeof obj.downloads.monthly === 'number' ? obj.downloads.monthly : 0;
+
+          return {
+            name: registryPkg.name,
+            description: registryPkg.description || '',
+            version: registryPkg.version,
+            keywords: keywords,
+            downloadsMonthly: monthlyDownloads,
+            npmUrl: (registryPkg.links && registryPkg.links.npm) ? registryPkg.links.npm : 'https://www.npmjs.com/package/' + registryPkg.name,
+          };
+        })
+        .filter(function (pkg) { return Boolean(pkg.name); });
+
+      allPackages = allPackages.concat(packages);
+
+      // Se vier menos itens que o tamanho da página, não há mais páginas para buscar
+      if (objects.length < size) {
+        break;
+      }
+
+      from += size;
+    }
+
+    return allPackages;
+  }
+
+  // ---- Init npm packages --------
+  async function initNpm () {
+    try {
+      var packages = await fetchNpmPackages();
+
+      setupNpmControls();
+
+      // Ordena os pacotes por downloads mensais (ordem decrescente) para garantir uma apresentação consistente
+      packages.sort(function (/** @type {NpmFrontendPackage} */ a, /** @type {NpmFrontendPackage} */ b) {
+        return b.downloadsMonthly - a.downloadsMonthly;
+      });
+
+      npmPackagesState.all = packages;
+      npmPackagesState.visibleCount = INITIAL_NPM_PACKAGES;
+      renderNpmPackages();
+
+      var meta = document.getElementById('npmMeta');
+      var totalDownloads = packages.reduce(function (sum, pkg) { return sum + pkg.downloadsMonthly; }, 0);
+
+      // Verifica se o elemento de meta existe antes de tentar definir seu conteúdo
+      if (meta) {
+        meta.textContent = packages.length + ' pacotes · ' + formatDownloads(totalDownloads) + ' downloads/mês';
+      }
+
+    } catch (err) {
+      var grid = document.getElementById('npmGrid');
+
+      // Verifica se o elemento do grid existe antes de tentar exibir a mensagem de erro
+      if (grid) {
+        grid.innerHTML =
+          '<div class="packages__loading">' +
+          '<p>' +
+          'Não foi possível carregar os pacotes. ' +
+          '<a href="https://www.npmjs.com/search?q=sanitized_name%3A%40' + ORG.toLowerCase() + '" target="_blank" rel="noopener noreferrer" style="color:var(--color-primary)">' +
+          'Veja no npm' +
+          '</a>' +
+          '</p>' +
+          '</div>';
+      }
+    }
+  }
+
+  // ---- Render npm packages ------
+  function renderNpmPackages () {
+    var grid = document.getElementById('npmGrid');
+    var showMoreBtn = document.getElementById('npmShowMore');
+
+    // Verifica se o elemento do grid existe antes de tentar renderizar os pacotes
+    if (!grid) {
+      return;
+    }
+
+    var searchTerm = npmPackagesState.searchTerm;
+
+    npmPackagesState.filtered = npmPackagesState.all.filter(function (pkg) {
+      var name = normalizeText(pkg.name);
+      var description = normalizeText(pkg.description);
+      var keywords = Array.isArray(pkg.keywords) ? normalizeText(pkg.keywords.join(' ')) : '';
+      return searchTerm === '' || name.indexOf(searchTerm) !== -1 || description.indexOf(searchTerm) !== -1 || keywords.indexOf(searchTerm) !== -1;
+    });
+
+    // Ordenação dinâmica
+    if (npmPackagesState.sortBy === 'name') {
+      npmPackagesState.filtered.sort(function (a, b) {
+        return a.name.localeCompare(b.name, 'pt-BR', { sensitivity: 'base' });
+      });
+    } else {
+      npmPackagesState.filtered.sort(function (a, b) {
+        return (b.downloadsMonthly || 0) - (a.downloadsMonthly || 0);
+      });
+    }
+
+    grid.innerHTML = '';
+
+    var visiblePackages = npmPackagesState.filtered.slice(0, npmPackagesState.visibleCount > 0 ? npmPackagesState.visibleCount : INITIAL_NPM_PACKAGES);
+
+    // Verifica se há pacotes visíveis para renderizar, caso contrário, exibe uma mensagem indicando que nenhum pacote foi encontrado para a busca atual
+    if (visiblePackages.length === 0) {
+      grid.innerHTML =
+        '<div class="packages__loading">' +
+        '<p>Nenhum pacote encontrado para sua busca.</p>' +
+        '</div>';
+    } else {
+      visiblePackages.forEach(function (pkg) {
+        // @ts-ignore
+        grid.appendChild(createNpmPackageCard(pkg));
+      });
+
+      initReveal();
+    }
+
+    // Verifica se o botão de mostrar mais existe antes de tentar atualizar sua visibilidade e texto
+    if (showMoreBtn) {
+      var remaining = npmPackagesState.filtered.length - visiblePackages.length;
       showMoreBtn.style.display = remaining <= 0 ? 'none' : '';
       showMoreBtn.textContent = remaining > 0 ? 'Mostrar mais (' + remaining + ')' : 'Mostrar mais';
     }
@@ -575,6 +899,7 @@
     var filtersContainer = document.getElementById('projectFilters');
     var categoriesSet = /** @type {Record<string, boolean>} */ ({});
 
+    // Verifica se o container de filtros existe antes de tentar renderizar os filtros
     if (!filtersContainer) {
       return;
     }
@@ -775,4 +1100,5 @@
 
   init();
   initNuget();
+  initNpm();
 })();
