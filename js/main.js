@@ -16,6 +16,14 @@
   const PACKAGES_STEP = 9;
   const INITIAL_NPM_PACKAGES = 9;
   const NPM_PACKAGES_STEP = 9;
+  const STORAGE_LOCALE_KEY = 'tooark.locale';
+  var globalWindow = /** @type {Window & { TooarkI18n?: { htmlLang: { pt: string; en: string; }; messages: any; }; }} */ (window);
+  var i18nConfig = globalWindow.TooarkI18n || { htmlLang: { pt: 'pt-BR', en: 'en-US' }, messages: { pt: {}, en: {} } };
+  var HTML_LANG = i18nConfig.htmlLang;
+  var I18N = i18nConfig.messages;
+
+  /** @type {'pt' | 'en'} */
+  var currentLocale = 'pt';
 
   /** @type {IntersectionObserver | null} */
   var revealObserver = null;
@@ -100,24 +108,24 @@
 
   // Category mapping
   const CATEGORIES = {
-    'Bibliotecas': [
+    libraries: [
       'tooark',
       'eslint',
       'tooark-observability-nodejs',
       'tooark-observability-web'
     ],
-    'CI/CD': [
+    cicd: [
       'sonarqube-template-include',
       'trivy-summary-include',
       'trivy-summary-action',
       'notification-trigger-url-include',
       'notification-trigger-url-action'
     ],
-    'Infra': [
+    infra: [
       'terraform-aws-gcp-modules',
       'base-images'
     ],
-    'Ferramentas': [
+    tools: [
       'custom-terminal'
     ],
   };
@@ -134,6 +142,143 @@
     }
 
     return '#00B050';
+  }
+
+  /**
+   * @param {string} path
+   */
+  function t (path) {
+    var parts = path.split('.');
+    /** @type {any} */
+    var value = I18N[currentLocale];
+
+    for (var i = 0; i < parts.length; i++) {
+      if (!value || typeof value !== 'object') {
+        return path;
+      }
+
+      value = value[parts[i]];
+    }
+
+    return typeof value === 'string' ? value : path;
+  }
+
+  function getPreferredLocale () {
+    var savedLocale = window.localStorage.getItem(STORAGE_LOCALE_KEY);
+
+    if (savedLocale === 'pt' || savedLocale === 'en') {
+      return /** @type {'pt' | 'en'} */ (savedLocale);
+    }
+
+    var browserLocale = ((navigator.languages && navigator.languages[0]) || navigator.language || 'pt-BR').toLowerCase();
+    return browserLocale.indexOf('en') === 0 ? 'en' : 'pt';
+  }
+
+  /**
+   * @param {number} value
+   */
+  function formatNumberByLocale (value) {
+    return value.toLocaleString(currentLocale === 'en' ? 'en-US' : 'pt-BR');
+  }
+
+  function applyTranslations () {
+    document.querySelectorAll('[data-i18n]').forEach(function (el) {
+      var key = el.getAttribute('data-i18n');
+      if (key) {
+        el.textContent = t(key);
+      }
+    });
+
+    document.querySelectorAll('[data-i18n-html]').forEach(function (el) {
+      var key = el.getAttribute('data-i18n-html');
+      if (key) {
+        el.innerHTML = t(key);
+      }
+    });
+
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(function (el) {
+      var key = el.getAttribute('data-i18n-placeholder');
+      if (key && el instanceof HTMLInputElement) {
+        el.placeholder = t(key);
+      }
+    });
+
+    document.querySelectorAll('[data-i18n-aria-label]').forEach(function (el) {
+      var key = el.getAttribute('data-i18n-aria-label');
+      if (key) {
+        el.setAttribute('aria-label', t(key));
+      }
+    });
+
+    document.querySelectorAll('[data-i18n-content]').forEach(function (el) {
+      var key = el.getAttribute('data-i18n-content');
+      if (key) {
+        el.setAttribute('content', t(key));
+      }
+    });
+
+    document.title = t('meta.title');
+  }
+
+  function updateLanguageSwitcher () {
+    var ptBtn = document.getElementById('langPt');
+    var enBtn = document.getElementById('langEn');
+
+    if (ptBtn) {
+      ptBtn.classList.toggle('active', currentLocale === 'pt');
+      ptBtn.setAttribute('aria-pressed', String(currentLocale === 'pt'));
+    }
+
+    if (enBtn) {
+      enBtn.classList.toggle('active', currentLocale === 'en');
+      enBtn.setAttribute('aria-pressed', String(currentLocale === 'en'));
+    }
+  }
+
+  function setupLanguageSwitcher () {
+    var ptBtn = document.getElementById('langPt');
+    var enBtn = document.getElementById('langEn');
+
+    if (ptBtn && ptBtn.dataset.bound !== 'true') {
+      ptBtn.addEventListener('click', function () {
+        setLocale('pt');
+      });
+      ptBtn.dataset.bound = 'true';
+    }
+
+    if (enBtn && enBtn.dataset.bound !== 'true') {
+      enBtn.addEventListener('click', function () {
+        setLocale('en');
+      });
+      enBtn.dataset.bound = 'true';
+    }
+  }
+
+  /**
+   * @param {'pt' | 'en'} locale
+   */
+  function setLocale (locale) {
+    currentLocale = locale;
+    window.localStorage.setItem(STORAGE_LOCALE_KEY, locale);
+    document.documentElement.lang = HTML_LANG[locale];
+
+    applyTranslations();
+    updateStats(projectsState.all);
+    renderFilters(projectsState.all);
+    renderProjects();
+    renderPackages();
+    renderNpmPackages();
+    updateLanguageSwitcher();
+  }
+
+  /**
+   * @param {string} categoryId
+   */
+  function getCategoryLabel (categoryId) {
+    var labels = I18N[currentLocale].categoryLabels;
+    return Object.prototype.hasOwnProperty.call(labels, categoryId)
+      ? labels[/** @type {'libraries' | 'cicd' | 'infra' | 'tools' | 'others'} */ (categoryId)]
+      : categoryId;
   }
 
   // ---- Header scroll ------------
@@ -272,18 +417,18 @@
 
   // ---- Setup package controls ---
   function setupPackageControls () {
-        var sortSelect = /** @type {HTMLSelectElement | null} */ (document.getElementById('nugetSort'));
+    var sortSelect = /** @type {HTMLSelectElement | null} */ (document.getElementById('nugetSort'));
 
-        // Ordenação NuGet
-        if (sortSelect && sortSelect.dataset.bound !== 'true') {
-          sortSelect.addEventListener('change', function () {
-            if (sortSelect) {
-              packagesState.sortBy = sortSelect.value === 'name' ? 'name' : 'downloads';
-              renderPackages();
-            }
-          });
-          sortSelect.dataset.bound = 'true';
+    // Ordenação NuGet
+    if (sortSelect && sortSelect.dataset.bound !== 'true') {
+      sortSelect.addEventListener('change', function () {
+        if (sortSelect) {
+          packagesState.sortBy = sortSelect.value === 'name' ? 'name' : 'downloads';
+          renderPackages();
         }
+      });
+      sortSelect.dataset.bound = 'true';
+    }
     var searchInput = /** @type {HTMLInputElement | null} */ (document.getElementById('nugetSearch'));
     var showMoreBtn = document.getElementById('nugetShowMore');
 
@@ -351,7 +496,7 @@
       return (count / 1000).toFixed(1).replace('.0', '') + 'k';
     }
 
-    return count.toLocaleString('pt-BR');
+    return formatNumberByLocale(count);
   }
 
   // ---- Fetch NuGet packages -----
@@ -414,7 +559,7 @@
       '<polyline points="7 10 12 15 17 10"/>' +
       '<line x1="12" y1="15" x2="12" y2="3"/>' +
       '</svg>' +
-      formatDownloads(pkg.totalDownloads) + ' downloads' +
+      formatDownloads(pkg.totalDownloads) + ' ' + t('packages.downloadsLabel') +
       '</span>';
 
     var frameworkHtml =
@@ -432,13 +577,13 @@
       '<span class="package-card__name">' + pkg.id + '</span>' +
       '<span class="package-card__version">v' + pkg.version + '</span>' +
       '</div>' +
-      '<p class="package-card__desc">' + (pkg.description || 'Sem descrição disponível.') + '</p>' +
+      '<p class="package-card__desc">' + (pkg.description || t('packages.noDescription')) + '</p>' +
       '<div class="package-card__meta">' + downloadsHtml + frameworkHtml + '</div>';
 
     return card;
   }
 
-  // ---- Create npm package card --
+  // ---- Create npm package card ------
   /**
    * @param {NpmFrontendPackage} pkg
    */
@@ -451,7 +596,7 @@
 
     var tagsText = pkg.keywords.length > 0
       ? pkg.keywords.slice(0, 3).join(' · ')
-      : 'JavaScript / TypeScript';
+      : t('packages.npmFallbackTags');
 
     var downloadsHtml =
       '<span class="package-card__meta-item">' +
@@ -460,7 +605,7 @@
       '<polyline points="7 10 12 15 17 10"/>' +
       '<line x1="12" y1="15" x2="12" y2="3"/>' +
       '</svg>' +
-      formatDownloads(pkg.downloadsMonthly) + ' downloads' +
+      formatDownloads(pkg.downloadsMonthly) + ' ' + t('packages.downloadsLabel') +
       '</span>';
 
     var tagsHtml =
@@ -477,7 +622,7 @@
       '<span class="package-card__name">' + pkg.name + '</span>' +
       '<span class="package-card__version">v' + pkg.version + '</span>' +
       '</div>' +
-      '<p class="package-card__desc">' + (pkg.description || 'Sem descrição disponível.') + '</p>' +
+      '<p class="package-card__desc">' + (pkg.description || t('packages.noDescription')) + '</p>' +
       '<div class="package-card__meta">' + downloadsHtml + tagsHtml + '</div>';
 
     return card;
@@ -490,8 +635,6 @@
       var packages = data.data || [];
 
       setupPackageControls();
-
-      console.log({packages})
 
       // Ordena os pacotes por total de downloads (ordem decrescente) para destacar os mais populares
       packages.sort(function (/** @type {{ totalDownloads: number; }} */ a, /** @type {{ totalDownloads: number; }} */ b) {
@@ -511,7 +654,7 @@
 
       // Verifica se o elemento de meta existe antes de tentar definir seu conteúdo
       if (meta) {
-        meta.textContent = packages.length + ' pacotes · ' + formatDownloads(totalDownloads) + ' downloads';
+        meta.textContent = packages.length + ' ' + t('packages.metaPackages') + ' · ' + formatDownloads(totalDownloads) + ' ' + t('packages.metaDownloads');
       }
 
     } catch (err) {
@@ -522,9 +665,9 @@
         grid.innerHTML =
           '<div class="packages__loading">' +
           '<p>' +
-          'Não foi possível carregar os pacotes. ' +
+          t('errors.packagesLoad') + ' ' +
           '<a href="https://www.nuget.org/profiles/' + ORG + '" target="_blank" rel="noopener noreferrer" style="color:var(--color-primary)">' +
-          'Veja no NuGet' +
+          t('packages.seeInNuget') +
           '</a>' +
           '</p>' +
           '</div>';
@@ -553,7 +696,7 @@
     // Ordenação dinâmica
     if (packagesState.sortBy === 'name') {
       packagesState.filtered.sort(function (a, b) {
-        return a.id.localeCompare(b.id, 'pt-BR', { sensitivity: 'base' });
+        return a.id.localeCompare(b.id, currentLocale === 'en' ? 'en-US' : 'pt-BR', { sensitivity: 'base' });
       });
     } else {
       packagesState.filtered.sort(function (a, b) {
@@ -581,7 +724,7 @@
     if (visiblePackages.length === 0) {
       grid.innerHTML =
         '<div class="packages__loading">' +
-        '<p>Nenhum pacote encontrado para sua busca.</p>' +
+        '<p>' + t('packages.empty') + '</p>' +
         '</div>';
     } else {
       visiblePackages.forEach(function (pkg) {
@@ -596,7 +739,7 @@
     if (showMoreBtn) {
       var remaining = packagesState.filtered.length - visiblePackages.length;
       showMoreBtn.style.display = remaining <= 0 ? 'none' : '';
-      showMoreBtn.textContent = remaining > 0 ? 'Mostrar mais (' + remaining + ')' : 'Mostrar mais';
+      showMoreBtn.textContent = remaining > 0 ? t('common.showMore') + ' (' + remaining + ')' : t('common.showMore');
     }
   }
 
@@ -677,7 +820,7 @@
 
       // Verifica se o elemento de meta existe antes de tentar definir seu conteúdo
       if (meta) {
-        meta.textContent = packages.length + ' pacotes · ' + formatDownloads(totalDownloads) + ' downloads/mês';
+        meta.textContent = packages.length + ' ' + t('packages.metaPackages') + ' · ' + formatDownloads(totalDownloads) + ' ' + t('packages.metaDownloadsPerMonth');
       }
 
     } catch (err) {
@@ -688,9 +831,9 @@
         grid.innerHTML =
           '<div class="packages__loading">' +
           '<p>' +
-          'Não foi possível carregar os pacotes. ' +
+          t('errors.packagesLoad') + ' ' +
           '<a href="https://www.npmjs.com/search?q=sanitized_name%3A%40' + ORG.toLowerCase() + '" target="_blank" rel="noopener noreferrer" style="color:var(--color-primary)">' +
-          'Veja no npm' +
+          t('packages.seeInNpm') +
           '</a>' +
           '</p>' +
           '</div>';
@@ -720,7 +863,7 @@
     // Ordenação dinâmica
     if (npmPackagesState.sortBy === 'name') {
       npmPackagesState.filtered.sort(function (a, b) {
-        return a.name.localeCompare(b.name, 'pt-BR', { sensitivity: 'base' });
+        return a.name.localeCompare(b.name, currentLocale === 'en' ? 'en-US' : 'pt-BR', { sensitivity: 'base' });
       });
     } else {
       npmPackagesState.filtered.sort(function (a, b) {
@@ -736,7 +879,7 @@
     if (visiblePackages.length === 0) {
       grid.innerHTML =
         '<div class="packages__loading">' +
-        '<p>Nenhum pacote encontrado para sua busca.</p>' +
+        '<p>' + t('packages.empty') + '</p>' +
         '</div>';
     } else {
       visiblePackages.forEach(function (pkg) {
@@ -751,7 +894,7 @@
     if (showMoreBtn) {
       var remaining = npmPackagesState.filtered.length - visiblePackages.length;
       showMoreBtn.style.display = remaining <= 0 ? 'none' : '';
-      showMoreBtn.textContent = remaining > 0 ? 'Mostrar mais (' + remaining + ')' : 'Mostrar mais';
+      showMoreBtn.textContent = remaining > 0 ? t('common.showMore') + ' (' + remaining + ')' : t('common.showMore');
     }
   }
 
@@ -806,7 +949,7 @@
       }
     }
 
-    return 'Outros';
+    return 'others';
   }
 
   // ---- Render project card ------
@@ -881,9 +1024,9 @@
     card.innerHTML =
       '<div class="project-card__header">' +
       '<span class="project-card__name">' + repo.name + '</span>' +
-      '<span class="project-card__visibility">Public</span>' +
+      '<span class="project-card__visibility">' + t('common.visibilityPublic') + '</span>' +
       '</div>' +
-      '<p class="project-card__desc">' + (repo.description || 'Sem descrição disponível.') + '</p>' +
+      '<p class="project-card__desc">' + (repo.description || t('packages.noDescription')) + '</p>' +
       '<div class="project-card__meta">' +
       langDot + starsHtml + issuesHtml + licenseHtml +
       '</div>';
@@ -919,7 +1062,7 @@
       var btn = document.createElement('button');
       btn.className = 'filter-btn';
       btn.dataset.filter = cat;
-      btn.textContent = cat === 'all' ? 'Todos' : cat;
+      btn.textContent = cat === 'all' ? t('projects.filterAll') : getCategoryLabel(cat);
 
       if (cat === projectsState.activeCategory) {
         btn.classList.add('active');
@@ -987,7 +1130,7 @@
     if (visibleRepos.length === 0) {
       grid.innerHTML =
         '<div class="projects__loading">' +
-        '<p>Nenhum projeto encontrado para os filtros atuais.</p>' +
+        '<p>' + t('projects.empty') + '</p>' +
         '</div>';
     } else {
       visibleRepos.forEach(function (repo) {
@@ -1001,7 +1144,7 @@
     if (showMoreBtn) {
       var remaining = projectsState.filtered.length - visibleRepos.length;
       showMoreBtn.style.display = remaining <= 0 ? 'none' : '';
-      showMoreBtn.textContent = remaining > 0 ? 'Mostrar mais (' + remaining + ')' : 'Mostrar mais';
+      showMoreBtn.textContent = remaining > 0 ? t('common.showMore') + ' (' + remaining + ')' : t('common.showMore');
     }
 
     if (filtersContainer) {
@@ -1033,25 +1176,26 @@
     var statRepos = document.getElementById('statRepos');
     // Verifica se o elemento de estatísticas de repositórios existe antes de tentar definir seu conteúdo
     if (statRepos) {
-      statRepos.textContent = String(repos.length);
+      statRepos.textContent = formatNumberByLocale(repos.length);
     }
 
     var statStars = document.getElementById('statStars');
     // Verifica se o elemento de estatísticas de estrelas existe antes de tentar definir seu conteúdo
     if (statStars) {
-      statStars.textContent = String(totalStars);
+      statStars.textContent = formatNumberByLocale(totalStars);
     }
 
     var statLanguages = document.getElementById('statLanguages');
     // Verifica se o elemento de estatísticas de linguagens existe antes de tentar definir seu conteúdo
     if (statLanguages) {
-      statLanguages.textContent = String(Object.keys(languages).length);
+      statLanguages.textContent = formatNumberByLocale(Object.keys(languages).length);
     }
   }
 
   // ---- Init ---------------------
   async function init () {
     try {
+      setupLanguageSwitcher();
       setupProjectControls();
 
       var repos = await fetchRepos();
@@ -1088,15 +1232,20 @@
         grid.innerHTML =
           '<div class="projects__loading">' +
           '<p>' +
-          'Não foi possível carregar os projetos. ' +
+          t('errors.projectsLoad') + ' ' +
           '<a href="https://github.com/' + ORG + '" target="_blank" rel="noopener noreferrer" style="color:var(--color-primary)">' +
-          'Veja no GitHub' +
+          'GitHub' +
           '</a>' +
           '</p>' +
           '</div>';
       }
     }
   }
+
+  currentLocale = getPreferredLocale();
+  document.documentElement.lang = HTML_LANG[currentLocale];
+  applyTranslations();
+  updateLanguageSwitcher();
 
   init();
   initNuget();
