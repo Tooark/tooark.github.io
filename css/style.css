@@ -30,9 +30,9 @@
   --radius-md: 10px;
   --radius-lg: 16px;
   --radius-xl: 24px;
-  --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
-  --shadow-lg: 0 8px 32px rgba(0,0,0,0.5);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
   --transition: 0.2s ease;
 }
 
@@ -196,6 +196,35 @@ button {
   border-color: var(--color-border-light);
   background: var(--color-surface);
   color: var(--color-text);
+}
+
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.lang-switch__btn {
+  min-width: 40px;
+  height: 30px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  transition: all var(--transition);
+}
+
+.lang-switch__btn:hover {
+  color: var(--color-text);
+}
+
+.lang-switch__btn.active {
+  background: var(--color-primary);
+  color: #000;
 }
 
 .header__toggle {
@@ -885,8 +914,8 @@ button {
 
 .contributor-card__action--linkedin {
   color: #0A66C2;
-  border-color: rgba(10,102,194,0.12);
-  background: rgba(10,102,194,0.04);
+  border-color: rgba(10, 102, 194, 0.12);
+  background: rgba(10, 102, 194, 0.04);
 }
 
 .packages__loading {
@@ -968,6 +997,7 @@ button {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -975,7 +1005,9 @@ button {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Scroll reveal */
@@ -1025,6 +1057,10 @@ button {
     justify-content: center;
     border-radius: var(--radius-md);
     background: var(--color-surface);
+  }
+
+  .lang-switch {
+    margin-top: 6px;
   }
 
   .header__close {

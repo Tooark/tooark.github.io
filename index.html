@@ -3,9 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tooark — Ferramentas para Desenvolvedores e DevOps</title>
+    <title data-i18n="meta.title">
+      Tooark — Ferramentas para Desenvolvedores e DevOps
+    </title>
     <meta
       name="description"
+      data-i18n-content="meta.description"
       content="Ferramentas open source criadas por entusiastas para ajudar desenvolvedores de software e DevOps. Bibliotecas, CI/CD templates, infraestrutura e mais."
     />
     <meta
@@ -17,10 +20,12 @@
     <!-- Open Graph -->
     <meta
       property="og:title"
+      data-i18n-content="meta.ogTitle"
       content="Tooark — Ferramentas para Desenvolvedores e DevOps"
     />
     <meta
       property="og:description"
+      data-i18n-content="meta.ogDescription"
       content="Ferramentas open source criadas por entusiastas para ajudar desenvolvedores de software e DevOps."
     />
     <meta property="og:image" content="https://tooark.com/media/favicon.png" />
@@ -31,10 +36,12 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta
       name="twitter:title"
+      data-i18n-content="meta.twitterTitle"
       content="Tooark — Ferramentas para Desenvolvedores e DevOps"
     />
     <meta
       name="twitter:description"
+      data-i18n-content="meta.twitterDescription"
       content="Ferramentas open source para desenvolvedores e DevOps."
     />
     <meta name="twitter:image" content="https://tooark.com/media/favicon.png" />
@@ -58,19 +65,68 @@
     <!-- Header -->
     <header class="header" id="header">
       <div class="container header__inner">
-        <a href="#" class="header__logo" aria-label="Tooark Home">
+        <a
+          href="#"
+          class="header__logo"
+          data-i18n-aria-label="header.homeAria"
+          aria-label="Tooark Home"
+        >
           <img src="media/logo-dark.svg" alt="Tooark" width="32" height="32" />
           <span>Tooark</span>
         </a>
         <nav class="header__nav" id="nav">
-          <button class="header__close" id="navClose" aria-label="Fechar menu">
+          <button
+            class="header__close"
+            id="navClose"
+            data-i18n-aria-label="header.closeMenu"
+            aria-label="Fechar menu"
+          >
             <span></span><span></span>
           </button>
-          <a href="#projects" class="header__link">Projetos</a>
-          <a href="#packages" class="header__link">Pacotes</a>
-          <a href="#contributors" class="header__link">Contribuidores</a>
-          <a href="#categories" class="header__link">Categorias</a>
-          <a href="#services" class="header__link">Serviços</a>
+          <a href="#projects" class="header__link" data-i18n="header.projects"
+            >Projetos</a
+          >
+          <a href="#packages" class="header__link" data-i18n="header.packages"
+            >Pacotes</a
+          >
+          <a
+            href="#contributors"
+            class="header__link"
+            data-i18n="header.contributors"
+            >Contribuidores</a
+          >
+          <a
+            href="#categories"
+            class="header__link"
+            data-i18n="header.categories"
+            >Categorias</a
+          >
+          <a href="#services" class="header__link" data-i18n="header.services"
+            >Serviços</a
+          >
+          <div
+            class="lang-switch"
+            role="group"
+            data-i18n-aria-label="header.languageSelector"
+            aria-label="Selecionar idioma"
+          >
+            <button
+              class="lang-switch__btn"
+              id="langPt"
+              data-lang="pt"
+              type="button"
+            >
+              PT
+            </button>
+            <button
+              class="lang-switch__btn"
+              id="langEn"
+              data-lang="en"
+              type="button"
+            >
+              EN
+            </button>
+          </div>
           <a
             href="https://github.com/Tooark"
             class="header__link header__link--github"
@@ -94,6 +150,7 @@
         <button
           class="header__toggle"
           id="navToggle"
+          data-i18n-aria-label="header.openMenu"
           aria-label="Abrir menu"
           aria-expanded="false"
         >
@@ -110,13 +167,18 @@
           <img src="media/tooark-dark.svg" alt="" width="160" height="160" />
         </div>
         <h1 class="hero__title">Tooark</h1>
-        <p class="hero__subtitle">
+        <p class="hero__subtitle" data-i18n-html="hero.subtitle">
           Ferramentas criadas por entusiastas para ajudar<br />
           <strong>Desenvolvedores de Software</strong>
           e <strong>DevOps</strong>
         </p>
         <div class="hero__actions">
-          <a href="#projects" class="btn btn--primary">Ver Projetos</a>
+          <a
+            href="#projects"
+            class="btn btn--primary"
+            data-i18n="hero.ctaProjects"
+            >Ver Projetos</a
+          >
           <a
             href="https://github.com/Tooark"
             class="btn btn--outline"
@@ -140,7 +202,9 @@
         <div class="hero__stats" id="heroStats">
           <div class="hero__stat">
             <span class="hero__stat-value" id="statRepos">—</span>
-            <span class="hero__stat-label">Repositórios</span>
+            <span class="hero__stat-label" data-i18n="hero.statsRepos"
+              >Repositórios</span
+            >
           </div>
           <div class="hero__stat">
             <span class="hero__stat-value" id="statStars">—</span>
@@ -148,7 +212,9 @@
           </div>
           <div class="hero__stat">
             <span class="hero__stat-value" id="statLanguages">—</span>
-            <span class="hero__stat-label">Linguagens</span>
+            <span class="hero__stat-label" data-i18n="hero.statsLanguages"
+              >Linguagens</span
+            >
           </div>
         </div>
       </div>
@@ -158,8 +224,10 @@
     <section class="section" id="projects">
       <div class="container">
         <div class="section__header">
-          <h2 class="section__title">Projetos Open Source</h2>
-          <p class="section__desc">
+          <h2 class="section__title" data-i18n="projects.title">
+            Projetos Open Source
+          </h2>
+          <p class="section__desc" data-i18n="projects.desc">
             Temos projetos que são open source construídos para resolver
             problemas reais do dia a dia de desenvolvimento e operações.
           </p>
@@ -169,18 +237,26 @@
             type="search"
             id="projectSearch"
             class="list-search"
+            data-i18n-placeholder="projects.searchPlaceholder"
             placeholder="Buscar projetos por nome ou descrição"
+            data-i18n-aria-label="projects.searchAria"
             aria-label="Buscar projetos"
             autocomplete="off"
           />
         </div>
         <div class="projects__filters" id="projectFilters">
-          <button class="filter-btn active" data-filter="all">Todos</button>
+          <button
+            class="filter-btn active"
+            data-filter="all"
+            data-i18n="projects.filterAll"
+          >
+            Todos
+          </button>
         </div>
         <div class="projects__grid" id="projectsGrid">
           <div class="projects__loading">
             <div class="spinner"></div>
-            <p>Carregando projetos...</p>
+            <p data-i18n="projects.loading">Carregando projetos...</p>
           </div>
         </div>
         <div class="list-more-wrap">
@@ -189,6 +265,7 @@
             id="projectsShowMore"
             type="button"
             style="display: none"
+            data-i18n="common.showMore"
           >
             Mostrar mais
           </button>
@@ -200,8 +277,8 @@
     <section class="section section--alt" id="packages">
       <div class="container">
         <div class="section__header">
-          <h2 class="section__title">Pacotes</h2>
-          <p class="section__desc">
+          <h2 class="section__title" data-i18n="packages.title">Pacotes</h2>
+          <p class="section__desc" data-i18n="packages.desc">
             Bibliotecas publicadas em registros de pacotes para uso direto em
             suas aplicações.
           </p>
@@ -212,7 +289,12 @@
           <div class="packages__registry-header">
             <span class="registry-badge registry-badge--nuget">NuGet</span>
             <div class="packages__registry-info">
-              <h3 class="packages__registry-title">Pacotes .NET</h3>
+              <h3
+                class="packages__registry-title"
+                data-i18n="packages.nugetTitle"
+              >
+                Pacotes .NET
+              </h3>
               <span class="packages__registry-meta" id="nugetMeta"></span>
             </div>
             <a
@@ -220,6 +302,7 @@
               class="packages__registry-link"
               target="_blank"
               rel="noopener noreferrer"
+              data-i18n="common.seeAll"
               >Ver todos &rarr;</a
             >
           </div>
@@ -231,7 +314,9 @@
               type="search"
               id="nugetSearch"
               class="list-search"
+              data-i18n-placeholder="packages.searchPlaceholder"
               placeholder="Buscar pacotes por nome ou descrição"
+              data-i18n-aria-label="packages.nugetSearchAria"
               aria-label="Buscar pacotes NuGet"
               autocomplete="off"
               style="flex: 1 1 0"
@@ -239,17 +324,24 @@
             <select
               id="nugetSort"
               class="list-sort"
+              data-i18n-aria-label="packages.sortAria"
               aria-label="Ordenar pacotes"
               style="min-width: 140px"
             >
-              <option value="downloads" selected>Downloads</option>
-              <option value="name">Nome</option>
+              <option
+                value="downloads"
+                selected
+                data-i18n="packages.sortDownloads"
+              >
+                Downloads
+              </option>
+              <option value="name" data-i18n="packages.sortName">Nome</option>
             </select>
           </div>
           <div class="packages__grid" id="nugetGrid">
             <div class="packages__loading">
               <div class="spinner"></div>
-              <p>Carregando pacotes...</p>
+              <p data-i18n="packages.loading">Carregando pacotes...</p>
             </div>
           </div>
           <div class="list-more-wrap">
@@ -258,6 +350,7 @@
               id="nugetShowMore"
               type="button"
               style="display: none"
+              data-i18n="common.showMore"
             >
               Mostrar mais
             </button>
@@ -270,7 +363,9 @@
             <span class="registry-badge registry-badge--npm">npm</span>
             <div class="packages__registry-info">
               <h3 class="packages__registry-title">
-                Pacotes JavaScript / TypeScript
+                <span data-i18n="packages.npmTitle"
+                  >Pacotes JavaScript / TypeScript</span
+                >
               </h3>
               <span class="packages__registry-meta" id="npmMeta"></span>
             </div>
@@ -279,6 +374,7 @@
               class="packages__registry-link"
               target="_blank"
               rel="noopener noreferrer"
+              data-i18n="common.seeAll"
               >Ver todos &rarr;</a
             >
           </div>
@@ -290,7 +386,9 @@
               type="search"
               id="npmSearch"
               class="list-search"
+              data-i18n-placeholder="packages.searchPlaceholder"
               placeholder="Buscar pacotes por nome ou descrição"
+              data-i18n-aria-label="packages.npmSearchAria"
               aria-label="Buscar pacotes npm"
               autocomplete="off"
               style="flex: 1 1 0"
@@ -298,17 +396,24 @@
             <select
               id="npmSort"
               class="list-sort"
+              data-i18n-aria-label="packages.sortAria"
               aria-label="Ordenar pacotes"
               style="min-width: 140px"
             >
-              <option value="downloads" selected>Downloads</option>
-              <option value="name">Nome</option>
+              <option
+                value="downloads"
+                selected
+                data-i18n="packages.sortDownloads"
+              >
+                Downloads
+              </option>
+              <option value="name" data-i18n="packages.sortName">Nome</option>
             </select>
           </div>
           <div class="packages__grid" id="npmGrid">
             <div class="packages__loading">
               <div class="spinner"></div>
-              <p>Carregando pacotes...</p>
+              <p data-i18n="packages.loading">Carregando pacotes...</p>
             </div>
           </div>
           <div class="list-more-wrap">
@@ -317,6 +422,7 @@
               id="npmShowMore"
               type="button"
               style="display: none"
+              data-i18n="common.showMore"
             >
               Mostrar mais
             </button>
@@ -329,8 +435,10 @@
     <section class="section section--alt" id="contributors">
       <div class="container">
         <div class="section__header">
-          <h2 class="section__title">Contribuidores</h2>
-          <p class="section__desc">
+          <h2 class="section__title" data-i18n="contributors.title">
+            Contribuidores
+          </h2>
+          <p class="section__desc" data-i18n="contributors.desc">
             Pessoas que ajudam a construir e evoluir os projetos open source da
             Tooark.
           </p>
@@ -499,8 +607,10 @@
     <section class="section" id="categories">
       <div class="container">
         <div class="section__header">
-          <h2 class="section__title">O que fazemos</h2>
-          <p class="section__desc">
+          <h2 class="section__title" data-i18n="categories.title">
+            O que fazemos
+          </h2>
+          <p class="section__desc" data-i18n="categories.desc">
             Organizamos nossas ferramentas em categorias para facilitar a busca
             pela solução ideal para seu projeto.
           </p>
@@ -524,8 +634,16 @@
                 />
               </svg>
             </div>
-            <h3 class="category-card__title">Bibliotecas</h3>
-            <p class="category-card__desc">
+            <h3
+              class="category-card__title"
+              data-i18n="categories.cardLibrariesTitle"
+            >
+              Bibliotecas
+            </h3>
+            <p
+              class="category-card__desc"
+              data-i18n="categories.cardLibrariesDesc"
+            >
               Pacotes e bibliotecas reutilizáveis em C#, Node.js e JavaScript
               para acelerar o desenvolvimento.
             </p>
@@ -548,8 +666,13 @@
                 />
               </svg>
             </div>
-            <h3 class="category-card__title">CI/CD &amp; DevOps</h3>
-            <p class="category-card__desc">
+            <h3
+              class="category-card__title"
+              data-i18n="categories.cardCiCdTitle"
+            >
+              CI/CD &amp; DevOps
+            </h3>
+            <p class="category-card__desc" data-i18n="categories.cardCiCdDesc">
               Templates e actions para GitLab CI e GitHub Actions — SonarQube,
               Trivy, notificações e mais.
             </p>
@@ -571,8 +694,16 @@
                 <line x1="12" y1="17" x2="12" y2="21" />
               </svg>
             </div>
-            <h3 class="category-card__title">Observabilidade</h3>
-            <p class="category-card__desc">
+            <h3
+              class="category-card__title"
+              data-i18n="categories.cardObservabilityTitle"
+            >
+              Observabilidade
+            </h3>
+            <p
+              class="category-card__desc"
+              data-i18n="categories.cardObservabilityDesc"
+            >
               Soluções pré-configuradas com OpenTelemetry para monitoramento de
               aplicações web e backend.
             </p>
@@ -593,8 +724,13 @@
                 <polyline points="22 4 12 14.01 9 11.01" />
               </svg>
             </div>
-            <h3 class="category-card__title">Infraestrutura</h3>
-            <p class="category-card__desc">
+            <h3
+              class="category-card__title"
+              data-i18n="categories.cardInfraTitle"
+            >
+              Infraestrutura
+            </h3>
+            <p class="category-card__desc" data-i18n="categories.cardInfraDesc">
               Módulos Terraform para AWS e GCP, imagens Docker base e
               configurações de terminal.
             </p>
@@ -608,9 +744,10 @@
       <div class="container">
         <div class="section__header">
           <h2 class="section__title">
-            Serviços <span class="badge">Em breve</span>
+            <span data-i18n="services.title">Serviços</span>
+            <span class="badge" data-i18n="services.soon">Em breve</span>
           </h2>
-          <p class="section__desc">
+          <p class="section__desc" data-i18n="services.desc">
             Estamos preparando serviços profissionais para levar suas operações
             ao próximo nível.
           </p>
@@ -632,8 +769,16 @@
                 <polyline points="8 6 2 12 8 18" />
               </svg>
             </div>
-            <h3 class="service-card__title">Consultoria DevOps</h3>
-            <p class="service-card__desc">
+            <h3
+              class="service-card__title"
+              data-i18n="services.cardConsultingTitle"
+            >
+              Consultoria DevOps
+            </h3>
+            <p
+              class="service-card__desc"
+              data-i18n="services.cardConsultingDesc"
+            >
               Implementação de pipelines CI/CD, conteinerização e automação de
               infraestrutura.
             </p>
@@ -653,8 +798,13 @@
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
               </svg>
             </div>
-            <h3 class="service-card__title">Segurança &amp; Compliance</h3>
-            <p class="service-card__desc">
+            <h3
+              class="service-card__title"
+              data-i18n="services.cardSecurityTitle"
+            >
+              Segurança &amp; Compliance
+            </h3>
+            <p class="service-card__desc" data-i18n="services.cardSecurityDesc">
               Análise de vulnerabilidades, quality gates e conformidade de
               código com melhores práticas.
             </p>
@@ -678,8 +828,16 @@
                 <line x1="12" y1="22.08" x2="12" y2="12" />
               </svg>
             </div>
-            <h3 class="service-card__title">Monitoramento</h3>
-            <p class="service-card__desc">
+            <h3
+              class="service-card__title"
+              data-i18n="services.cardMonitoringTitle"
+            >
+              Monitoramento
+            </h3>
+            <p
+              class="service-card__desc"
+              data-i18n="services.cardMonitoringDesc"
+            >
               Setup completo de observabilidade com OpenTelemetry, dashboards e
               alertas inteligentes.
             </p>
@@ -698,7 +856,12 @@
     <footer class="footer">
       <div class="container footer__inner">
         <div class="footer__brand">
-          <a href="#" class="footer__logo" aria-label="Tooark Home">
+          <a
+            href="#"
+            class="footer__logo"
+            data-i18n-aria-label="header.homeAria"
+            aria-label="Tooark Home"
+          >
             <img
               src="media/logo-dark.svg"
               alt="Tooark"
@@ -708,26 +871,61 @@
             <span>Tooark</span>
           </a>
           <p class="footer__tagline">
-            Ferramentas para Desenvolvedores e DevOps
+            <span data-i18n="footer.tagline"
+              >Ferramentas para Desenvolvedores e DevOps</span
+            >
           </p>
         </div>
         <div class="footer__links">
           <a
             href="https://github.com/Tooark"
+            class="btn"
             target="_blank"
             rel="noopener noreferrer"
-            >GitHub</a
           >
-          <!-- <a href="mailto:contato@tooark.com">Contato</a> -->
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"
+              />
+            </svg>
+            GitHub
+          </a>
+          <!-- <a
+            href="mailto:contato@tooark.com"
+            class="btn"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 -960 960 960"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                d="M149-135q-39.05 0-66.53-27.48Q55-189.95 55-229v-502q0-39.46 27.47-67.23Q109.95-826 149-826h662q39.46 0 67.23 27.77Q906-770.46 906-731v502q0 39.05-27.77 66.52Q850.46-135 811-135H149Zm331-295L149-653v424h662v-424L480-430Zm0-83 327-218H154l326 218ZM149-653v-78 502-424Z"
+              />
+            </svg>
+            Contato
+          </a> -->
         </div>
         <div class="footer__copy">
           <p>
-            &copy; <span id="year"></span> Tooark. Todos os direitos reservados.
+            &copy; <span id="year"></span> Tooark.
+            <span data-i18n="footer.rights">Todos os direitos reservados.</span>
           </p>
         </div>
       </div>
     </footer>
 
+    <script src="js/i18n.js"></script>
     <script src="js/main.js"></script>
   </body>
 </html>
