@@ -548,6 +548,7 @@ button {
 .project-card__meta {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 16px;
   font-size: 0.813rem;
   color: var(--color-text-muted);
@@ -753,6 +754,12 @@ button {
   background: rgba(205, 57, 57, 0.102);
   color: #cd3939;
   border: 1px solid rgba(205, 57, 57, 0.302);
+}
+
+.registry-badge--github {
+  background: rgba(88, 166, 255, 0.12);
+  color: #58a6ff;
+  border: 1px solid rgba(88, 166, 255, 0.28);
 }
 
 .packages__grid {
