@@ -7,7 +7,7 @@
 
   const ORG = 'Tooark';
   const API = 'https://api.github.com';
-  const SITE_REPO = 'tooark.github.io';
+  const REPO_HIDE = ['tooark.github.io', '.github'];
   const NUGET_API = 'https://azuresearch-usnc.nuget.org/query';
   const NPM_API = 'https://registry.npmjs.org/-/v1/search';
   const INITIAL_PROJECTS = 9;
@@ -104,6 +104,7 @@
     'CSS': '#3C9CD7',
     'Python': '#FECF40',
     'Go': '#00ACD7',
+    'PowerShell': '#131e27'
   };
 
   // Category mapping
@@ -960,6 +961,7 @@
    *  language: string;
    *  stargazers_count: number;
    *  open_issues_count: number;
+   *  forks_count: number;
    *  license: { spdx_id: string; };
    *  description: any;
    * }} repo
@@ -1009,6 +1011,22 @@
         '</span>';
     }
 
+    var forksHtml = '';
+    // Verifica se o repositório possui forks
+    if (repo.forks_count > 0) {
+      forksHtml =
+        '<span class="project-card__meta-item">' +
+        '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+        '<circle cx="6" cy="6" r="3"/>' +
+        '<circle cx="18" cy="18" r="3"/>' +
+        '<circle cx="18" cy="6" r="3"/>' +
+        '<path d="M9 6h6"/>' +
+        '<path d="M9 8c0 5 6 3 6 7"/>' +
+        '</svg>' +
+        repo.forks_count +
+        '</span>';
+    }
+
     var licenseHtml = '';
     // Verifica se o repositório tem uma licença válida
     if (repo.license && repo.license.spdx_id && repo.license.spdx_id !== 'NOASSERTION') {
@@ -1028,7 +1046,7 @@
       '</div>' +
       '<p class="project-card__desc">' + (repo.description || t('packages.noDescription')) + '</p>' +
       '<div class="project-card__meta">' +
-      langDot + starsHtml + issuesHtml + licenseHtml +
+      langDot + starsHtml + issuesHtml + forksHtml + licenseHtml +
       '</div>';
 
     return card;
@@ -1200,9 +1218,9 @@
 
       var repos = await fetchRepos();
 
-      // Filtra os repositórios para excluir o repositório do site
+      // Filtra os repositórios para excluir os repositórios do site
       repos = repos.filter(function (/** @type {{ name: string; }} */ r) {
-        return r.name !== SITE_REPO;
+        return !REPO_HIDE.includes(r.name);
       });
 
       // Ordena os repositórios primeiro por número de estrelas (stargazers_count) em ordem decrescente,
