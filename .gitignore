@@ -21,3 +21,6 @@ system/
 
 # Logs
 *.log
+
+# Fonte da imagem social (4,5 MB) — o site referencia apenas media/og-image.jpg otimizada
+media/og-image.png

@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  quality:
+    name: Formatação e validação de HTML
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Prettier (formatação)
+        run: npx --yes prettier@3.6.2 --check .
+
+      - name: html-validate (HTML)
+        run: npx --yes html-validate@8.29.0 index.html 404.html
+
+      - name: Sintaxe dos módulos JS
+        run: |
+          for f in js/*.js js/modules/*.js; do
+            node --check "$f"
+          done
