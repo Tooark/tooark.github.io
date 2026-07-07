@@ -21,6 +21,8 @@ export const INITIAL_PACKAGES = 9;
 export const PACKAGES_STEP = 9;
 export const INITIAL_NPM_PACKAGES = 9;
 export const NPM_PACKAGES_STEP = 9;
+export const INITIAL_EXTENSIONS = 9;
+export const EXTENSIONS_STEP = 9;
 export const STORAGE_LOCALE_KEY = 'tooark.locale';
 
 // Language colors (GitHub style)
