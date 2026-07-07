@@ -14,7 +14,6 @@ import { initGithubPackages } from './modules/ghpkg.js';
 
 initLocale();
 initLayout();
-
 initProjects();
 initNuget();
 initNpm();

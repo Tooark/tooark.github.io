@@ -15,13 +15,13 @@ export const MARKETPLACE_API =
 
 export const MAX_TAG_FILTERS = 5;
 export const MAX_CARD_TAGS = 4;
-export const INITIAL_PROJECTS = 9;
+export const INITIAL_PROJECTS = 6;
 export const PROJECTS_STEP = 9;
-export const INITIAL_PACKAGES = 9;
+export const INITIAL_PACKAGES = 6;
 export const PACKAGES_STEP = 9;
-export const INITIAL_NPM_PACKAGES = 9;
+export const INITIAL_NPM_PACKAGES = 6;
 export const NPM_PACKAGES_STEP = 9;
-export const INITIAL_EXTENSIONS = 9;
+export const INITIAL_EXTENSIONS = 6;
 export const EXTENSIONS_STEP = 9;
 export const STORAGE_LOCALE_KEY = 'tooark.locale';
 
