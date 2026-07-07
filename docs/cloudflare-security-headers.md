@@ -37,12 +37,15 @@ os security headers devem ser aplicados na borda, com **Response Header Transfor
 Valor completo (uma linha):
 
 ```txt
-default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://github.com https://avatars.githubusercontent.com; connect-src 'self' https://api.github.com https://azuresearch-usnc.nuget.org https://registry.npmjs.org https://api.tooark.com https://open-vsx.org https://marketplace.visualstudio.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
+default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://github.com https://avatars.githubusercontent.com; connect-src 'self' https://api.github.com https://azuresearch-usnc.nuget.org https://registry.npmjs.org https://api.tooark.com https://open-vsx.org https://marketplace.visualstudio.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
 ```
 
 Racional das origens permitidas (manter em sincronia com
 [`js/modules/config.js`](../js/modules/config.js)):
 
+- **script-src**: além dos scripts próprios (`'self'`), o beacon do
+  Cloudflare Web Analytics (`static.cloudflareinsights.com`), injetado
+  automaticamente pela Cloudflare na borda.
 - **style-src / font-src**: Google Fonts (`fonts.googleapis.com` /
   `fonts.gstatic.com`). `'unsafe-inline'` é necessário porque os cards
   renderizados via JS usam atributos `style` (ex.: cor da linguagem no card de
@@ -57,6 +60,40 @@ Racional das origens permitidas (manter em sincronia com
 Publique primeiro como **`Content-Security-Policy-Report-Only`** com o mesmo
 valor, navegue pelo site com o console aberto (F12) verificando violações e,
 só então, troque para `Content-Security-Policy`.
+
+### Scripts injetados pela Cloudflare (achados do Report-Only)
+
+O modo Report-Only revelou violações de `script-src` que **não vêm do código do
+site** (o `index.html` não tem nenhum script inline) e sim de recursos da
+própria Cloudflare injetados na borda:
+
+1. **Script inline no fim do `<body>`** (`window.__CF$cv$params` →
+   `/cdn-cgi/challenge-platform/scripts/jsd/main.js`): injetado pelo
+   **Bot Fight Mode / JavaScript Detections**. O conteúdo muda a cada resposta
+   (ray ID + timestamp), então allowlist por hash **não funciona**. Opções:
+   - **Desativar o Bot Fight Mode** (Security → Bots) — mantém o CSP estrito
+     `script-src 'self'`. Para um site estático sem formulários/login é a
+     opção recomendada.
+   - Manter e usar `nonce`: a Cloudflare lê o nonce do header CSP e o aplica
+     nos scripts que injeta; porém, como nosso header é estático (Transform
+     Rule), o nonce seria fixo e previsível — segurança equivalente a
+     `unsafe-inline`. Não recomendado.
+   - `'unsafe-inline'`: desaconselhado pela própria Cloudflare.
+2. **`https://static.cloudflareinsights.com/beacon.min.js`**: beacon RUM do
+   **Web Analytics** (injeção automática). Opções:
+   - Manter o Web Analytics e adicionar a origem ao `script-src`:
+     `script-src 'self' https://static.cloudflareinsights.com`
+   - Ou desativar a injeção automática (Analytics & Logs → Web Analytics).
+
+Avisos esperados no console em Report-Only (sem ação):
+`The Content Security Policy directive 'upgrade-insecure-requests' is ignored
+when delivered in a report-only policy.` — a diretiva só tem efeito no modo
+enforce.
+
+> **Decisão aplicada (jul/2026)**: Bot Fight Mode **desativado** (mantém
+> `script-src` sem inline) e Web Analytics **mantido**, com
+> `https://static.cloudflareinsights.com` adicionado ao `script-src` — já
+> refletido no valor canônico do CSP acima.
 
 ## Como aplicar (API)
 
@@ -81,7 +118,7 @@ curl -X PUT \
             "X-Frame-Options": { "operation": "set", "value": "DENY" },
             "Referrer-Policy": { "operation": "set", "value": "strict-origin-when-cross-origin" },
             "Permissions-Policy": { "operation": "set", "value": "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()" },
-            "Content-Security-Policy-Report-Only": { "operation": "set", "value": "default-src '\''self'\''; script-src '\''self'\''; style-src '\''self'\'' '\''unsafe-inline'\'' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src '\''self'\'' data: https://github.com https://avatars.githubusercontent.com; connect-src '\''self'\'' https://api.github.com https://azuresearch-usnc.nuget.org https://registry.npmjs.org https://api.tooark.com https://open-vsx.org https://marketplace.visualstudio.com; object-src '\''none'\''; base-uri '\''self'\''; form-action '\''self'\''; frame-ancestors '\''none'\''; upgrade-insecure-requests" }
+            "Content-Security-Policy-Report-Only": { "operation": "set", "value": "default-src '\''self'\''; script-src '\''self'\'' https://static.cloudflareinsights.com; style-src '\''self'\'' '\''unsafe-inline'\'' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src '\''self'\'' data: https://github.com https://avatars.githubusercontent.com; connect-src '\''self'\'' https://api.github.com https://azuresearch-usnc.nuget.org https://registry.npmjs.org https://api.tooark.com https://open-vsx.org https://marketplace.visualstudio.com; object-src '\''none'\''; base-uri '\''self'\''; form-action '\''self'\''; frame-ancestors '\''none'\''; upgrade-insecure-requests" }
           }
         }
       }
