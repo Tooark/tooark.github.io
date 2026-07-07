@@ -271,7 +271,7 @@
   ShapeFX.ShapeBuilder = (function () {
     var gap = CONFIG.gap;
     var shapeCanvas = document.createElement('canvas');
-    var ctx = shapeCanvas.getContext('2d');
+    var ctx = shapeCanvas.getContext('2d', { willReadFrequently: true });
     var fontSize = 400;
 
     function fit() {
