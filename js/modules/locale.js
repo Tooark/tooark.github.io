@@ -119,13 +119,6 @@ function applyTranslations() {
     }
   });
 
-  document.querySelectorAll('[data-i18n-html]').forEach(function (el) {
-    var key = el.getAttribute('data-i18n-html');
-    if (key) {
-      el.innerHTML = t(key);
-    }
-  });
-
   document.querySelectorAll('[data-i18n-placeholder]').forEach(function (el) {
     var key = el.getAttribute('data-i18n-placeholder');
     if (key && el instanceof HTMLInputElement) {

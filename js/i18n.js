@@ -32,8 +32,9 @@
           sponsors: 'Apoie',
         },
         hero: {
-          subtitle:
-            'Ferramentas criadas por entusiastas para ajudar <strong>Desenvolvedores de Software</strong> e <strong>DevOps</strong>',
+          subtitleStart: 'Ferramentas criadas por entusiastas para ajudar',
+          subtitleDevs: 'Desenvolvedores de Software',
+          subtitleAnd: 'e',
           ctaProjects: 'Ver Projetos',
           statsRepos: 'Repositórios',
           statsLanguages: 'Linguagens',
@@ -172,8 +173,9 @@
           sponsors: 'Sponsor',
         },
         hero: {
-          subtitle:
-            'Tools created by enthusiasts to help <strong>Software Developers</strong> and <strong>DevOps</strong>',
+          subtitleStart: 'Tools created by enthusiasts to help',
+          subtitleDevs: 'Software Developers',
+          subtitleAnd: 'and',
           ctaProjects: 'View Projects',
           statsRepos: 'Repositories',
           statsLanguages: 'Languages',
