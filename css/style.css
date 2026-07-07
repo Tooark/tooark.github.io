@@ -113,6 +113,10 @@ button {
 }
 
 /* --- Utilities --- */
+[hidden] {
+  display: none !important;
+}
+
 .svg-sprite {
   display: none;
 }
@@ -271,12 +275,16 @@ button {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 60% 50% at 50% 0%,
+    radial-gradient(
+      ellipse 60% 50% at 50% 0%,
       rgba(245, 158, 11, 0.08),
-      transparent),
-    radial-gradient(ellipse 80% 40% at 50% 100%,
+      transparent
+    ),
+    radial-gradient(
+      ellipse 80% 40% at 50% 100%,
       rgba(16, 185, 129, 0.05),
-      transparent);
+      transparent
+    );
   pointer-events: none;
 }
 

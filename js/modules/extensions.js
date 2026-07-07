@@ -7,6 +7,8 @@ import {
   OPENVSX_API,
   OPENVSX_NAMESPACE,
   MARKETPLACE_API,
+  INITIAL_EXTENSIONS,
+  EXTENSIONS_STEP,
 } from './config.js';
 import { t, formatDownloads, onLocaleChange } from './locale.js';
 import { pickNumber, pickString } from './utils.js';
@@ -28,8 +30,8 @@ import { initReveal } from './reveal.js';
  * }} VsCodeExtension
  */
 
-/** @type {{ all: VsCodeExtension[]; }} */
-var extensionsState = { all: [] };
+/** @type {{ all: VsCodeExtension[]; visibleCount: number; }} */
+var extensionsState = { all: [], visibleCount: INITIAL_EXTENSIONS };
 
 // ---- Fetch VS Code Marketplace ----
 /**
@@ -200,6 +202,7 @@ function createExtensionCard(ext) {
 // ---- Render extensions --------
 function renderExtensions() {
   var grid = document.getElementById('extensionsGrid');
+  var showMoreBtn = document.getElementById('extensionsShowMore');
 
   // Verifica se o elemento do grid existe e há extensões carregadas antes de renderizar
   if (!grid || extensionsState.all.length === 0) {
@@ -208,11 +211,28 @@ function renderExtensions() {
 
   grid.innerHTML = '';
 
-  extensionsState.all.forEach(function (ext) {
+  var visibleExtensions = extensionsState.all.slice(
+    0,
+    extensionsState.visibleCount > 0
+      ? extensionsState.visibleCount
+      : INITIAL_EXTENSIONS,
+  );
+
+  visibleExtensions.forEach(function (ext) {
     grid.appendChild(createExtensionCard(ext));
   });
 
   initReveal();
+
+  // Verifica se o botão de mostrar mais existe antes de tentar atualizar sua visibilidade e texto
+  if (showMoreBtn) {
+    var remaining = extensionsState.all.length - visibleExtensions.length;
+    showMoreBtn.hidden = remaining <= 0;
+    showMoreBtn.textContent =
+      remaining > 0
+        ? t('common.showMore') + ' (' + remaining + ')'
+        : t('common.showMore');
+  }
 }
 
 // ---- Update extensions meta ---
@@ -253,10 +273,20 @@ onLocaleChange(function () {
 // ---- Init extensions ----------
 export async function initExtensions() {
   var grid = document.getElementById('extensionsGrid');
+  var showMoreBtn = document.getElementById('extensionsShowMore');
 
   // Verifica se o elemento do grid existe antes de tentar carregar as extensões
   if (!grid) {
     return;
+  }
+
+  // Verifica se o botão de mostrar mais existe e ainda não tem um listener de clique vinculado, para evitar múltiplos listeners
+  if (showMoreBtn && showMoreBtn.dataset.bound !== 'true') {
+    showMoreBtn.addEventListener('click', function () {
+      extensionsState.visibleCount += EXTENSIONS_STEP;
+      renderExtensions();
+    });
+    showMoreBtn.dataset.bound = 'true';
   }
 
   /** @type {Record<string, VsCodeExtension>} */
