@@ -29,6 +29,7 @@
           contributors: 'Contribuidores',
           categories: 'Categorias',
           services: 'Serviços',
+          about: 'Sobre',
           sponsors: 'Apoie',
         },
         hero: {
@@ -121,6 +122,12 @@
           cardMonitoringDesc:
             'Setup completo de observabilidade com OpenTelemetry, dashboards e alertas inteligentes.',
         },
+        about: {
+          title: 'Sobre a Tooark',
+          p1: 'A Tooark nasceu da vontade de transformar soluções que reescrevíamos a cada projeto — bibliotecas, pipelines, módulos de infraestrutura — em ferramentas open source que qualquer equipe possa adotar. Somos entusiastas de desenvolvimento e DevOps que mantêm os projetos de forma aberta e colaborativa.',
+          p2: 'Todo o código é publicado sob licenças permissivas — MIT, BSD-3-Clause e, nos novos projetos estruturais, Apache 2.0. Alguns projetos também ganharão versões SaaS com recursos específicos, sempre mantendo a base open source.',
+          p3: 'Quer participar? Use as ferramentas, abra uma issue, envie um pull request ou apoie o desenvolvimento — toda contribuição ajuda o ecossistema a evoluir, e quem contribui aparece na nossa seção de contribuidores.',
+        },
         sponsors: {
           title: 'Apoie a Tooark',
           desc: 'Se as ferramentas da Tooark te ajudam no dia a dia, considere apoiar o desenvolvimento. Toda contribuição mantém o ecossistema open source vivo.',
@@ -170,6 +177,7 @@
           contributors: 'Contributors',
           categories: 'Categories',
           services: 'Services',
+          about: 'About',
           sponsors: 'Sponsor',
         },
         hero: {
@@ -260,6 +268,12 @@
           cardMonitoringTitle: 'Monitoring',
           cardMonitoringDesc:
             'Complete observability setup with OpenTelemetry, dashboards and smart alerts.',
+        },
+        about: {
+          title: 'About Tooark',
+          p1: 'Tooark was born from the urge to turn solutions we kept rewriting on every project — libraries, pipelines, infrastructure modules — into open source tools any team can adopt. We are development and DevOps enthusiasts maintaining the projects in an open, collaborative way.',
+          p2: 'All code is released under permissive licenses — MIT, BSD-3-Clause and, for the new structural projects, Apache 2.0. Some projects will also gain SaaS versions with specific features, always keeping the open source core.',
+          p3: 'Want to join in? Use the tools, open an issue, send a pull request or support the development — every contribution helps the ecosystem evolve, and everyone who contributes is featured in our contributors section.',
         },
         sponsors: {
           title: 'Sponsor Tooark',

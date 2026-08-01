@@ -1028,6 +1028,23 @@ button {
 }
 
 /* ============================================
+   ABOUT
+   ============================================ */
+.about__content {
+  max-width: 720px;
+  margin: 0 auto;
+  display: grid;
+  gap: 20px;
+}
+
+.about__content p {
+  font-size: 1.063rem;
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+  text-align: center;
+}
+
+/* ============================================
    SPONSORS
    ============================================ */
 .sponsors__grid {

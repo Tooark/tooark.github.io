@@ -80,6 +80,19 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="css/style.css" />
+
+    <!-- Dados estruturados (schema.org) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Tooark",
+        "url": "https://tooark.com/",
+        "logo": "https://tooark.com/media/logo-dark.svg",
+        "description": "Ferramentas open source que aceleram o dia a dia de desenvolvedores e equipes DevOps. Bibliotecas .NET e Node, extensões VS Code, imagens Docker e templates CI/CD, sob licenças MIT, BSD-3-Clause e Apache 2.0.",
+        "sameAs": ["https://github.com/Tooark"]
+      }
+    </script>
   </head>
   <body>
     <!-- Sprite de ícones SVG reutilizados via <use> -->
@@ -147,6 +160,9 @@
           >
           <a href="#services" class="header__link" data-i18n="header.services"
             >Serviços</a
+          >
+          <a href="#about" class="header__link" data-i18n="header.about"
+            >Sobre</a
           >
           <a href="#sponsors" class="header__link" data-i18n="header.sponsors"
             >Apoie</a
@@ -938,6 +954,36 @@
             >Entre em contato</a
           >
         </div> -->
+      </div>
+    </section>
+
+    <!-- About -->
+    <section class="section" id="about">
+      <div class="container">
+        <div class="section__header">
+          <h2 class="section__title" data-i18n="about.title">Sobre a Tooark</h2>
+        </div>
+        <div class="about__content">
+          <p data-i18n="about.p1">
+            A Tooark nasceu da vontade de transformar soluções que reescrevíamos
+            a cada projeto — bibliotecas, pipelines, módulos de infraestrutura —
+            em ferramentas open source que qualquer equipe possa adotar. Somos
+            entusiastas de desenvolvimento e DevOps que mantêm os projetos de
+            forma aberta e colaborativa.
+          </p>
+          <p data-i18n="about.p2">
+            Todo o código é publicado sob licenças permissivas — MIT,
+            BSD-3-Clause e, nos novos projetos estruturais, Apache 2.0. Alguns
+            projetos também ganharão versões SaaS com recursos específicos,
+            sempre mantendo a base open source.
+          </p>
+          <p data-i18n="about.p3">
+            Quer participar? Use as ferramentas, abra uma issue, envie um pull
+            request ou apoie o desenvolvimento — toda contribuição ajuda o
+            ecossistema a evoluir, e quem contribui aparece na nossa seção de
+            contribuidores.
+          </p>
+        </div>
       </div>
     </section>
 
