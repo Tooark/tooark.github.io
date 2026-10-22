@@ -14,6 +14,7 @@ import { t, formatDownloads, onLocaleChange } from './locale.js';
 import { pickNumber, pickString } from './utils.js';
 import { getTooarkProjects } from './tooark-api.js';
 import { initReveal } from './reveal.js';
+import { updatePackageStat } from './package-stats.js';
 
 /**
  * @typedef {{
@@ -262,6 +263,12 @@ function updateExtensionsMeta() {
     ' · ' +
     formatDownloads(totalOpenVsx) +
     ' Open VSX';
+
+  updatePackageStat(
+    'extensions',
+    formatDownloads(totalInstalls + totalOpenVsx),
+    totalInstalls + totalOpenVsx,
+  );
 }
 
 // Re-renderiza a seção quando o idioma muda

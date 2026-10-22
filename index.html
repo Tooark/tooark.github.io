@@ -336,10 +336,83 @@
             Bibliotecas publicadas em registros de pacotes para uso direto em
             suas aplicações.
           </p>
+          <p class="packages__total" id="packagesTotal" hidden></p>
+        </div>
+
+        <div
+          class="packages__tabs"
+          role="tablist"
+          data-i18n-aria-label="packages.tabsAria"
+          aria-label="Registros de pacotes"
+        >
+          <button
+            class="packages__tab active"
+            id="packagesTabNuget"
+            type="button"
+            role="tab"
+            aria-selected="true"
+            aria-controls="packagesPanelNuget"
+          >
+            <span class="packages__tab-name">NuGet</span>
+            <span
+              class="packages__tab-stat packages__tab-stat--downloads"
+              id="nugetTabStat"
+              >—</span
+            >
+          </button>
+          <button
+            class="packages__tab"
+            id="packagesTabNpm"
+            type="button"
+            role="tab"
+            aria-selected="false"
+            aria-controls="packagesPanelNpm"
+            tabindex="-1"
+          >
+            <span class="packages__tab-name">npm</span>
+            <span
+              class="packages__tab-stat packages__tab-stat--downloads"
+              id="npmTabStat"
+              >—</span
+            >
+          </button>
+          <button
+            class="packages__tab"
+            id="packagesTabExtensions"
+            type="button"
+            role="tab"
+            aria-selected="false"
+            aria-controls="packagesPanelExtensions"
+            tabindex="-1"
+          >
+            <span class="packages__tab-name">VS Code</span>
+            <span
+              class="packages__tab-stat packages__tab-stat--downloads"
+              id="extensionsTabStat"
+              >—</span
+            >
+          </button>
+          <button
+            class="packages__tab"
+            id="packagesTabGhpkg"
+            type="button"
+            role="tab"
+            aria-selected="false"
+            aria-controls="packagesPanelGhpkg"
+            tabindex="-1"
+          >
+            <span class="packages__tab-name">GitHub</span>
+            <span class="packages__tab-stat" id="ghpkgTabStat">—</span>
+          </button>
         </div>
 
         <!-- NuGet -->
-        <div class="packages__registry">
+        <div
+          class="packages__registry"
+          id="packagesPanelNuget"
+          role="tabpanel"
+          aria-labelledby="packagesTabNuget"
+        >
           <div class="packages__registry-header">
             <span class="registry-badge registry-badge--nuget">NuGet</span>
             <div class="packages__registry-info">
@@ -407,7 +480,13 @@
         </div>
 
         <!-- npm -->
-        <div class="packages__registry">
+        <div
+          class="packages__registry"
+          id="packagesPanelNpm"
+          role="tabpanel"
+          aria-labelledby="packagesTabNpm"
+          hidden
+        >
           <div class="packages__registry-header">
             <span class="registry-badge registry-badge--npm">npm</span>
             <div class="packages__registry-info">
@@ -474,7 +553,13 @@
         </div>
 
         <!-- VS Code / Open VSX Extensions -->
-        <div class="packages__registry">
+        <div
+          class="packages__registry"
+          id="packagesPanelExtensions"
+          role="tabpanel"
+          aria-labelledby="packagesTabExtensions"
+          hidden
+        >
           <div class="packages__registry-header">
             <span class="registry-badge registry-badge--vscode">VS Code</span>
             <div class="packages__registry-info">
@@ -515,7 +600,13 @@
         </div>
 
         <!-- GitHub Packages -->
-        <div class="packages__registry">
+        <div
+          class="packages__registry"
+          id="packagesPanelGhpkg"
+          role="tabpanel"
+          aria-labelledby="packagesTabGhpkg"
+          hidden
+        >
           <div class="packages__registry-header">
             <span class="registry-badge registry-badge--github">GitHub</span>
             <div class="packages__registry-info">

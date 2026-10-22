@@ -7,6 +7,7 @@ import { t, onLocaleChange } from './locale.js';
 import { pickSemverTag } from './utils.js';
 import { getTooarkProjects } from './tooark-api.js';
 import { initReveal } from './reveal.js';
+import { updatePackageStat } from './package-stats.js';
 
 /**
  * @typedef {{
@@ -109,6 +110,13 @@ function updateGhpkgMeta() {
   }
 
   meta.textContent = ghpkgState.all.length + ' ' + t('packages.metaImages');
+
+  // O GHCR não expõe a contagem de pulls na API; a aba mostra a quantidade de imagens
+  updatePackageStat(
+    'ghpkg',
+    ghpkgState.all.length + ' ' + t('packages.tabImages'),
+    null,
+  );
 }
 
 // Re-renderiza a seção quando o idioma muda

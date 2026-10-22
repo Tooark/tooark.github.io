@@ -5,7 +5,12 @@
 export const ORG = 'Tooark';
 export const GITHUB_API = 'https://api.github.com';
 export const REPO_HIDE = ['tooark.github.io', '.github'];
-export const NUGET_API = 'https://azuresearch-usnc.nuget.org/query';
+// Réplicas regionais da busca do NuGet (listadas em api.nuget.org/v3/index.json). O índice de
+// downloads de cada uma é atualizado de forma independente e uma delas pode ficar defasada.
+export const NUGET_SEARCH_APIS = [
+  'https://azuresearch-usnc.nuget.org/query',
+  'https://azuresearch-ussc.nuget.org/query',
+];
 export const NPM_API = 'https://registry.npmjs.org/-/v1/search';
 export const TOOARK_API = 'https://api.tooark.com/api/projects';
 export const OPENVSX_API = 'https://open-vsx.org/api';

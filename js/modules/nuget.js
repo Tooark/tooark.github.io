@@ -2,10 +2,16 @@
    Tooark — Pacotes .NET (NuGet Search API)
    ============================================ */
 
-import { NUGET_API, ORG, INITIAL_PACKAGES, PACKAGES_STEP } from './config.js';
+import {
+  NUGET_SEARCH_APIS,
+  ORG,
+  INITIAL_PACKAGES,
+  PACKAGES_STEP,
+} from './config.js';
 import { t, formatDownloads, getLocaleTag, onLocaleChange } from './locale.js';
 import { normalizeText } from './utils.js';
 import { initReveal } from './reveal.js';
+import { updatePackageStat } from './package-stats.js';
 
 /** @type {{ all: any[]; filtered: any[]; visibleCount: number; searchTerm: string; sortBy: 'downloads' | 'name'; }} */
 var packagesState = {
@@ -62,9 +68,10 @@ function setupPackageControls() {
 
 // ---- Fetch NuGet packages -----
 /**
- * @returns {Promise<{ data: any[]; totalHits: number }>}
+ * @param {string} searchApi
+ * @returns {Promise<any[]>}
  */
-async function fetchNugetPackages() {
+async function fetchNugetPackagesFrom(searchApi) {
   var take = 50;
   var skip = 0;
   var totalHits = Number.POSITIVE_INFINITY;
@@ -74,7 +81,7 @@ async function fetchNugetPackages() {
   // Realiza requisições paginadas para a API do NuGet
   while (allPackages.length < totalHits) {
     var response = await fetch(
-      NUGET_API +
+      searchApi +
         '?q=owner:' +
         ORG +
         '&take=' +
@@ -106,10 +113,45 @@ async function fetchNugetPackages() {
     skip += take;
   }
 
-  return {
-    data: allPackages,
-    totalHits: allPackages.length,
-  };
+  return allPackages;
+}
+
+/**
+ * Consulta todas as réplicas da busca do NuGet e mantém, para cada pacote, o registro com mais
+ * downloads — o total só cresce, então o maior valor é o da réplica mais atualizada
+ * @returns {Promise<any[]>}
+ */
+async function fetchNugetPackages() {
+  var results = await Promise.allSettled(
+    NUGET_SEARCH_APIS.map(fetchNugetPackagesFrom),
+  );
+  /** @type {Record<string, any>} */
+  var packagesById = {};
+  var succeeded = false;
+
+  results.forEach(function (result) {
+    if (result.status !== 'fulfilled') {
+      return;
+    }
+
+    succeeded = true;
+    result.value.forEach(function (/** @type {any} */ pkg) {
+      var current = packagesById[pkg.id];
+
+      if (!current || pkg.totalDownloads > current.totalDownloads) {
+        packagesById[pkg.id] = pkg;
+      }
+    });
+  });
+
+  // Só falha se nenhuma réplica respondeu
+  if (!succeeded) {
+    throw new Error('Falha ao carregar pacotes NuGet');
+  }
+
+  return Object.keys(packagesById).map(function (id) {
+    return packagesById[id];
+  });
 }
 
 // ---- Create package card ------
@@ -190,6 +232,8 @@ function updateNugetMeta() {
     formatDownloads(totalDownloads) +
     ' ' +
     t('packages.metaDownloads');
+
+  updatePackageStat('nuget', formatDownloads(totalDownloads), totalDownloads);
 }
 
 // ---- Render packages ----------
@@ -272,8 +316,7 @@ export async function initNuget() {
   try {
     setupPackageControls();
 
-    var data = await fetchNugetPackages();
-    var packages = data.data || [];
+    var packages = await fetchNugetPackages();
 
     // Ordena os pacotes por total de downloads (ordem decrescente) para destacar os mais populares
     packages.sort(

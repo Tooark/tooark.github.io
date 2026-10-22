@@ -6,6 +6,7 @@
 
 import { initLocale } from './modules/locale.js';
 import { initLayout } from './modules/layout.js';
+import { initTabs } from './modules/tabs.js';
 import { initProjects } from './modules/projects.js';
 import { initNuget } from './modules/nuget.js';
 import { initNpm } from './modules/npm.js';
@@ -14,6 +15,7 @@ import { initGithubPackages } from './modules/ghpkg.js';
 
 initLocale();
 initLayout();
+initTabs();
 initProjects();
 initNuget();
 initNpm();

@@ -10,7 +10,9 @@ import {
 } from './config.js';
 import { t, formatDownloads, getLocaleTag, onLocaleChange } from './locale.js';
 import { normalizeText } from './utils.js';
+import { getTooarkProjects } from './tooark-api.js';
 import { initReveal } from './reveal.js';
+import { updatePackageStat } from './package-stats.js';
 
 /**
  * @typedef {{
@@ -19,6 +21,7 @@ import { initReveal } from './reveal.js';
  *  description: string;
  *  keywords: string[];
  *  downloadsMonthly: number;
+ *  downloadsTotal: number | null;
  *  npmUrl: string;
  * }} NpmFrontendPackage
  */
@@ -155,6 +158,7 @@ async function fetchNpmPackages() {
           version: registryPkg.version,
           keywords: keywords,
           downloadsMonthly: monthlyDownloads,
+          downloadsTotal: null,
           npmUrl:
             registryPkg.links && registryPkg.links.npm
               ? registryPkg.links.npm
@@ -244,17 +248,70 @@ function updateNpmMeta() {
     return;
   }
 
-  var totalDownloads = npmPackagesState.all.reduce(function (sum, pkg) {
+  var monthlyDownloads = npmPackagesState.all.reduce(function (sum, pkg) {
     return sum + pkg.downloadsMonthly;
   }, 0);
+  var hasTotals = npmPackagesState.all.some(function (pkg) {
+    return pkg.downloadsTotal !== null;
+  });
+  // Pacote ainda sem total na API conta pelos downloads do mês (limite inferior do acumulado)
+  var totalDownloads = npmPackagesState.all.reduce(function (sum, pkg) {
+    return (
+      sum +
+      (pkg.downloadsTotal !== null ? pkg.downloadsTotal : pkg.downloadsMonthly)
+    );
+  }, 0);
+
   meta.textContent =
     npmPackagesState.all.length +
     ' ' +
     t('packages.metaPackages') +
     ' · ' +
-    formatDownloads(totalDownloads) +
+    (hasTotals
+      ? formatDownloads(totalDownloads) +
+        ' ' +
+        t('packages.metaDownloads') +
+        ' · '
+      : '') +
+    formatDownloads(monthlyDownloads) +
     ' ' +
     t('packages.metaDownloadsPerMonth');
+
+  updatePackageStat(
+    'npm',
+    hasTotals
+      ? formatDownloads(totalDownloads)
+      : formatDownloads(monthlyDownloads) + '/' + t('packages.perMonthShort'),
+    totalDownloads,
+  );
+}
+
+// ---- Apply npm total downloads ----
+// O npm só expõe janelas de até 18 meses; o total acumulado vem da API da Tooark
+async function applyNpmTotals() {
+  try {
+    var projects = await getTooarkProjects();
+    /** @type {Record<string, number>} */
+    var totalsByName = {};
+
+    projects.forEach(function (project) {
+      var npmData = project.data && project.data.npm;
+
+      if (npmData && typeof npmData.totalDownloads === 'number') {
+        totalsByName[npmData.packageName] = npmData.totalDownloads;
+      }
+    });
+
+    npmPackagesState.all.forEach(function (pkg) {
+      if (pkg.name in totalsByName) {
+        pkg.downloadsTotal = totalsByName[pkg.name];
+      }
+    });
+
+    updateNpmMeta();
+  } catch (err) {
+    // API da Tooark indisponível: a seção segue com os downloads mensais do npm
+  }
 }
 
 // ---- Render npm packages ------
@@ -359,6 +416,7 @@ export async function initNpm() {
     npmPackagesState.visibleCount = INITIAL_NPM_PACKAGES;
     renderNpmPackages();
     updateNpmMeta();
+    applyNpmTotals();
   } catch (err) {
     var grid = document.getElementById('npmGrid');
 

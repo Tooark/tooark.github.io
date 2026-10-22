@@ -737,11 +737,91 @@ button {
 /* ============================================
    PACKAGES
    ============================================ */
+.packages__total {
+  margin-top: 20px;
+  font-size: 0.938rem;
+  color: var(--color-text-secondary);
+}
+
+.packages__total-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.packages__tabs {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: 32px;
+}
+
+.packages__tab {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 12px 24px;
+  margin-bottom: -1px;
+  font-size: 0.813rem;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--color-text-secondary);
+  border-bottom: 2px solid transparent;
+  transition: all var(--transition);
+}
+
+.packages__tab-name {
+  font-weight: 600;
+}
+
+.packages__tab-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.688rem;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.packages__tab-stat--downloads::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  background: currentColor;
+  -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>')
+    center / contain no-repeat;
+  mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>')
+    center / contain no-repeat;
+}
+
+.packages__tab:hover {
+  color: var(--color-text);
+}
+
+.packages__tab:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
+  border-radius: var(--radius-sm);
+}
+
+.packages__tab.active {
+  color: var(--color-text);
+  border-bottom-color: var(--color-primary);
+}
+
+.packages__tab.active .packages__tab-stat {
+  color: var(--color-primary);
+}
+
 .packages__registry {
   margin-bottom: 48px;
 }
 
-.packages__registry:last-child {
+.packages__registry:last-child,
+.packages__registry[role="tabpanel"] {
   margin-bottom: 0;
 }
 
@@ -1361,6 +1441,15 @@ button {
   .hero__stats {
     flex-direction: column;
     gap: 16px;
+  }
+
+  .packages__tabs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .packages__tab {
+    padding: 10px 4px;
   }
 }
 

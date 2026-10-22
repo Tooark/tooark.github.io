@@ -37,7 +37,7 @@ os security headers devem ser aplicados na borda, com **Response Header Transfor
 Valor completo (uma linha):
 
 ```txt
-default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://github.com https://avatars.githubusercontent.com; connect-src 'self' https://api.github.com https://azuresearch-usnc.nuget.org https://registry.npmjs.org https://api.tooark.com https://open-vsx.org https://marketplace.visualstudio.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
+default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://github.com https://avatars.githubusercontent.com; connect-src 'self' https://api.github.com https://azuresearch-usnc.nuget.org https://azuresearch-ussc.nuget.org https://registry.npmjs.org https://api.tooark.com https://open-vsx.org https://marketplace.visualstudio.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
 ```
 
 Racional das origens permitidas (manter em sincronia com
@@ -118,7 +118,7 @@ curl -X PUT \
             "X-Frame-Options": { "operation": "set", "value": "DENY" },
             "Referrer-Policy": { "operation": "set", "value": "strict-origin-when-cross-origin" },
             "Permissions-Policy": { "operation": "set", "value": "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()" },
-            "Content-Security-Policy-Report-Only": { "operation": "set", "value": "default-src '\''self'\''; script-src '\''self'\'' https://static.cloudflareinsights.com; style-src '\''self'\'' '\''unsafe-inline'\'' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src '\''self'\'' data: https://github.com https://avatars.githubusercontent.com; connect-src '\''self'\'' https://api.github.com https://azuresearch-usnc.nuget.org https://registry.npmjs.org https://api.tooark.com https://open-vsx.org https://marketplace.visualstudio.com; object-src '\''none'\''; base-uri '\''self'\''; form-action '\''self'\''; frame-ancestors '\''none'\''; upgrade-insecure-requests" }
+            "Content-Security-Policy-Report-Only": { "operation": "set", "value": "default-src '\''self'\''; script-src '\''self'\'' https://static.cloudflareinsights.com; style-src '\''self'\'' '\''unsafe-inline'\'' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src '\''self'\'' data: https://github.com https://avatars.githubusercontent.com; connect-src '\''self'\'' https://api.github.com https://azuresearch-usnc.nuget.org https://azuresearch-ussc.nuget.org https://registry.npmjs.org https://api.tooark.com https://open-vsx.org https://marketplace.visualstudio.com; object-src '\''none'\''; base-uri '\''self'\''; form-action '\''self'\''; frame-ancestors '\''none'\''; upgrade-insecure-requests" }
           }
         }
       }
