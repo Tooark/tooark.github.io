@@ -78,7 +78,9 @@ async function fetchNugetPackagesFrom(searchApi) {
   /** @type {any[]} */
   var allPackages = [];
 
-  // Realiza requisições paginadas para a API do NuGet
+  // Realiza requisições paginadas para a API do NuGet. Sem semVerLevel=2.0.0 a busca omite versões
+  // SemVer 2 — inclusive versões estáveis que dependem de um pacote com pré-release pontuado
+  // (ex.: 1.19.0-rc.1) — e exibe uma versão antiga do pacote
   while (allPackages.length < totalHits) {
     var response = await fetch(
       searchApi +
@@ -88,7 +90,7 @@ async function fetchNugetPackagesFrom(searchApi) {
         take +
         '&skip=' +
         skip +
-        '&prerelease=false',
+        '&prerelease=false&semVerLevel=2.0.0',
     );
 
     // Verifica se a resposta da API foi bem-sucedida, caso contrário, lança um erro para ser tratado posteriormente
