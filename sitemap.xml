@@ -31,4 +31,19 @@
       href="https://tooark.com/"
     />
   </url>
+  <url>
+    <loc>https://tooark.com/nuget-tooark/</loc>
+  </url>
+  <url>
+    <loc>https://tooark.com/web-components/</loc>
+  </url>
+  <url>
+    <loc>https://tooark.com/base-images/</loc>
+  </url>
+  <url>
+    <loc>https://tooark.com/action-security-scanner/</loc>
+  </url>
+  <url>
+    <loc>https://tooark.com/template-security-scanner/</loc>
+  </url>
 </urlset>
